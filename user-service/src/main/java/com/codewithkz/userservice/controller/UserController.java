@@ -1,11 +1,12 @@
 package com.codewithkz.userservice.controller;
 
+import com.codewithkz.userservice.core.response.ApiResponse;
+import com.codewithkz.userservice.dto.CreateDto;
 import com.codewithkz.userservice.dto.UserDto;
 import com.codewithkz.userservice.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,9 +21,16 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getUsers() {
+    public ResponseEntity<ApiResponse<List<UserDto>>> getUsers() {
         var users = service.findAll();
 
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(ApiResponse.success(users));
+    }
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<UserDto>> create(@RequestBody CreateDto dto) {
+        var result = service.create(dto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(result));
     }
 }

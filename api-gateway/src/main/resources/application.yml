@@ -8,12 +8,22 @@ spring:
     gateway:
       routes:
         - id: product-service
-          uri: http://localhost:8082
+          uri: lb://product-service
           predicates:
             - Path=/api/products/**
 
 
         - id: user-service
-          uri: http://localhost:8081
+          uri: lb://user-service
           predicates:
             - Path=/api/users/**
+
+        - id: inventory-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/api/inventories/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
