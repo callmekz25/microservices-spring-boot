@@ -1,0 +1,5 @@
+target/*.jar
+!target/app.jar
+.git
+.mvn
+.idea
