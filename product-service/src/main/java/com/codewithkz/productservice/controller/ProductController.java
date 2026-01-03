@@ -3,6 +3,7 @@ package com.codewithkz.productservice.controller;
 import com.codewithkz.productservice.core.response.ApiResponse;
 import com.codewithkz.productservice.dto.CreateDto;
 import com.codewithkz.productservice.dto.ProductDto;
+import com.codewithkz.productservice.dto.ProductInventoryDto;
 import com.codewithkz.productservice.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,5 +33,19 @@ public class ProductController {
         var result = service.create(dto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(result));
+    }
+
+    @GetMapping("{id}/detail")
+    public ResponseEntity<ApiResponse<ProductInventoryDto>> getProductDetail(@PathVariable Long id) {
+        var result = service.findByIdWithInventory(id);
+
+        return ResponseEntity.ok(ApiResponse.success(result));
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<ApiResponse<ProductDto>> getById(@PathVariable Long id) {
+        var result = service.findById(id);
+
+        return ResponseEntity.ok(ApiResponse.success(result));
     }
 }

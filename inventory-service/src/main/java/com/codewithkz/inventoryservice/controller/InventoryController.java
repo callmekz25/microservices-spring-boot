@@ -6,6 +6,7 @@ import com.codewithkz.inventoryservice.dto.InventoryDto;
 import com.codewithkz.inventoryservice.service.InventoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,6 +26,13 @@ public class InventoryController {
     @GetMapping
     public ResponseEntity<ApiResponse<List<InventoryDto>>> getInventories(){
         var result = service.findAll();
+
+        return ResponseEntity.ok(ApiResponse.success(result));
+    }
+
+    @GetMapping("products/{id}")
+    public ResponseEntity<ApiResponse<InventoryDto>> getInventoryByProductId(@PathVariable Long id){
+        var result = service.findByProductId(id);
 
         return ResponseEntity.ok(ApiResponse.success(result));
     }

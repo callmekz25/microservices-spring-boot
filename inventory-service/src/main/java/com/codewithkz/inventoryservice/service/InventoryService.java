@@ -1,6 +1,7 @@
 package com.codewithkz.inventoryservice.service;
 
 
+import com.codewithkz.inventoryservice.core.exception.NotFoundException;
 import com.codewithkz.inventoryservice.dto.InventoryDto;
 import com.codewithkz.inventoryservice.entity.Inventory;
 import com.codewithkz.inventoryservice.mapper.InventoryMapper;
@@ -30,5 +31,11 @@ public class InventoryService {
         Inventory inventory = Inventory.builder().productId(productId).quantity(quantity).build();
 
         repo.save(inventory);
+    }
+
+    public InventoryDto findByProductId(Long id) {
+        Inventory inventory = repo.findByProductId(id).orElseThrow(() -> new NotFoundException("Inventory not found"));
+
+        return mapper.toDto(inventory);
     }
 }
