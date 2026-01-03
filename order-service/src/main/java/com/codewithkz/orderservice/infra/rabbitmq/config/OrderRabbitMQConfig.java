@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RabbitMQConfig {
+public class OrderRabbitMQConfig {
 
     public static final String ORDER_EXCHANGE = "order.exchange";
     public static final String ORDER_CREATED_QUEUE = "order.created.queue";

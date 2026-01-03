@@ -1,10 +1,9 @@
 package com.codewithkz.inventoryservice.infra.rabbitmq.consumer;
 
-import com.codewithkz.inventoryservice.infra.rabbitmq.config.RabbitMQConfig;
+import com.codewithkz.inventoryservice.infra.rabbitmq.config.ProductRabbitMQConfig;
 import com.codewithkz.inventoryservice.infra.rabbitmq.event.ProductCreatedEvent;
 import com.codewithkz.inventoryservice.service.InventoryService;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +16,7 @@ public class ProductCreatedConsumer {
         this.service = service;
     }
 
-    @RabbitListener(queues = RabbitMQConfig.PRODUCT_CREATED_QUEUE)
+    @RabbitListener(queues = ProductRabbitMQConfig.PRODUCT_CREATED_QUEUE)
     public void onProductCreated(ProductCreatedEvent event) {
         log.info("Received product created event: {}", event.getProductId());
         service.create(event.getProductId(), event.getQuantity());

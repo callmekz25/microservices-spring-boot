@@ -7,6 +7,7 @@ import com.codewithkz.inventoryservice.entity.Inventory;
 import com.codewithkz.inventoryservice.mapper.InventoryMapper;
 import com.codewithkz.inventoryservice.repository.InventoryRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -38,4 +39,15 @@ public class InventoryService {
 
         return mapper.toDto(inventory);
     }
+
+    @Transactional
+    public void decrease(Long productId, int quantity) {
+        repo.decreaseQuantity(productId, quantity);
+    }
+
+    @Transactional
+    public void increase(Long productId, int quantity) {
+        repo.increaseQuantity(productId, quantity);
+    }
+
 }
