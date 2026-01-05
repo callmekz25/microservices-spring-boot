@@ -41,13 +41,15 @@ public class InventoryService {
     }
 
     @Transactional
-    public void decrease(Long productId, int quantity) {
-        repo.decreaseQuantity(productId, quantity);
+    public boolean reserved(Long productId, int quantity) {
+       int update = repo.decreaseQuantity(productId, quantity);
+       return update == 1;
     }
 
     @Transactional
-    public void increase(Long productId, int quantity) {
-        repo.increaseQuantity(productId, quantity);
+    public boolean released(Long productId, int quantity) {
+        int update = repo.increaseQuantity(productId, quantity);
+        return update == 1;
     }
 
 }

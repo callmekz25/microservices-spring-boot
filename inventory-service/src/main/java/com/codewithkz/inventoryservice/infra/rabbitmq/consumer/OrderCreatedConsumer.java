@@ -1,7 +1,7 @@
 package com.codewithkz.inventoryservice.infra.rabbitmq.consumer;
 
 import com.codewithkz.inventoryservice.dto.InventoryDto;
-import com.codewithkz.inventoryservice.infra.rabbitmq.config.OrderRabbitMQConfig;
+import com.codewithkz.inventoryservice.infra.rabbitmq.config.RabbitMQConfig;
 import com.codewithkz.inventoryservice.infra.rabbitmq.event.InventoryRejectedEvent;
 import com.codewithkz.inventoryservice.infra.rabbitmq.event.InventoryReservedEvent;
 import com.codewithkz.inventoryservice.infra.rabbitmq.event.OrderCreatedEvent;
@@ -20,16 +20,20 @@ public class OrderCreatedConsumer {
     private final InventoryService service;
     private final InventoryEventPublisher publisher;
 
-    @RabbitListener(queues = OrderRabbitMQConfig.ORDER_CREATED_QUEUE)
+    @RabbitListener(queues = RabbitMQConfig.ORDER_CREATED_QUEUE)
     public void handleOrderCreated(OrderCreatedEvent event) {
-
+        log.info("Received order created event: {}", event.getOrderId());
         InventoryDto inventory = service.findByProductId(event.getProductId());
 
-        if(inventory.getQuantity() >= event.getQuantity()) {
-            service.decrease(inventory.getProductId(), event.getQuantity());
-
+        boolean reserved = service.reserved(inventory.getProductId(), event.getQuantity());
+        if(reserved) {
             InventoryReservedEvent eventReserved =  InventoryReservedEvent
-                    .builder().orderId(event.getOrderId()).build();
+                    .builder()
+                    .orderId(event.getOrderId())
+                    .productId(event.getProductId())
+                    .quantity(event.getQuantity())
+                    .amount(event.getTotal())
+                    .build();
 
             publisher.publishInventoryReserved(eventReserved);
         } else {

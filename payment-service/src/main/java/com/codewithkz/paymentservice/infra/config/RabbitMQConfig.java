@@ -1,4 +1,4 @@
-package com.codewithkz.inventoryservice.infra.rabbitmq.config;
+package com.codewithkz.paymentservice.infra.config;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -11,14 +11,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class InventoryRabbitMQConfig {
+public class RabbitMQConfig {
+
+    public static final String PAYMENT_EXCHANGE = "payment.exchange";
+    public static final String PAYMENT_COMPLETED_ROUTING_KEY = "payment.completed";
+    public static final String PAYMENT_FAILED_ROUTING_KEY = "payment.failed";
 
     public static final String INVENTORY_EXCHANGE = "inventory.exchange";
-    public static final String INVENTORY_RESERVED_QUEUE = "inventory.reserved.queue";
     public static final String INVENTORY_RESERVED_ROUTING_KEY = "inventory.reserved";
-    public static final String INVENTORY_REJECTED_QUEUE = "inventory.rejected.queue";
-    public static final String INVENTORY_REJECTED_ROUTING_KEY = "inventory.rejected";
+    public static final String INVENTORY_RESERVED_QUEUE = "payment.inventory.reserved";
 
+
+    @Bean
+    public DirectExchange paymentExchange() {
+        return new DirectExchange(PAYMENT_EXCHANGE);
+    }
 
     @Bean
     public DirectExchange inventoryExchange() {
@@ -31,24 +38,11 @@ public class InventoryRabbitMQConfig {
     }
 
     @Bean
-    public Binding inventoryReservedBinding() {
+    public Binding inventoryRejectedBinding() {
         return BindingBuilder
                 .bind(inventoryReservedQueue())
                 .to(inventoryExchange())
                 .with(INVENTORY_RESERVED_ROUTING_KEY);
-    }
-
-    @Bean
-    public Queue inventoryRejectedQueue() {
-        return new Queue(INVENTORY_REJECTED_QUEUE);
-    }
-
-    @Bean
-    public Binding inventoryRejectedBinding() {
-        return BindingBuilder
-                .bind(inventoryRejectedQueue())
-                .to(inventoryExchange())
-                .with(INVENTORY_REJECTED_ROUTING_KEY);
     }
 
     @Bean
@@ -63,4 +57,5 @@ public class InventoryRabbitMQConfig {
         template.setMessageConverter(jsonMessageConverter());
         return template;
     }
+
 }

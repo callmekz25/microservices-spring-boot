@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class OrderCreatedEvent {
     private Long orderId;
+    private Double price;
     private Long productId;
+    private Double total;
     private int quantity;
+    private Long userId;
 }

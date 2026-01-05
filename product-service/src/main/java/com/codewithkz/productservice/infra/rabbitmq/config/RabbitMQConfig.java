@@ -11,7 +11,6 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 public class RabbitMQConfig {
 
     public static final String PRODUCT_EXCHANGE = "product.exchange";
-    public static final String PRODUCT_CREATED_QUEUE = "product.created.queue";
     public static final String PRODUCT_CREATED_ROUTING_KEY = "product.created";
 
     @Bean
@@ -19,18 +18,7 @@ public class RabbitMQConfig {
         return new DirectExchange(PRODUCT_EXCHANGE);
     }
 
-    @Bean
-    public Queue productCreatedQueue() {
-        return new Queue(PRODUCT_CREATED_QUEUE);
-    }
 
-    @Bean
-    public Binding productCreatedBinding() {
-        return BindingBuilder
-                .bind(productCreatedQueue())
-                .to(productExchange())
-                .with(PRODUCT_CREATED_ROUTING_KEY);
-    }
 
     @Bean
     public Jackson2JsonMessageConverter jsonMessageConverter() {

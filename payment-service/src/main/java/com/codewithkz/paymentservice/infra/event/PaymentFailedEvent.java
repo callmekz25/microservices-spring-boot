@@ -1,4 +1,4 @@
-package com.codewithkz.orderservice.infra.rabbitmq.event;
+package com.codewithkz.paymentservice.infra.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class InventoryReservedEvent {
+public class PaymentFailedEvent {
     private Long orderId;
+    private Long productId;
+    private int quantity;
+    private String reason;
 }
+

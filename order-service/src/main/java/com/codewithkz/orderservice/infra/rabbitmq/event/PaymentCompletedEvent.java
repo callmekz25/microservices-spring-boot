@@ -1,4 +1,4 @@
-package com.codewithkz.inventoryservice.infra.rabbitmq.event;
+package com.codewithkz.orderservice.infra.rabbitmq.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class InventoryReservedEvent {
+public class PaymentCompletedEvent {
     private Long orderId;
-    private Long productId;
-    private int quantity;
-    private Double amount;
 }

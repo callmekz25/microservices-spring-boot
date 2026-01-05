@@ -1,4 +1,4 @@
-package com.codewithkz.inventoryservice.infra.rabbitmq.event;
+package com.codewithkz.paymentservice.infra.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
