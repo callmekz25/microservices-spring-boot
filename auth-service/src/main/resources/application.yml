@@ -1,9 +1,14 @@
 server:
-  port: 8087
+  port: 8081
+
+jwt:
+  secret: cDQgcWIx2cd6Dnj1Za0FmPNFOB5dmW1A
+  access-token-expiration: 900000      # 15 min
+  refresh-token-expiration: 2592000000  # 30 days
 
 spring:
   datasource:
-    url: jdbc:h2:mem:userdb
+    url: jdbc:h2:mem:authuserdb
     driverClassName: org.h2.Driver
     username: sa
     password:

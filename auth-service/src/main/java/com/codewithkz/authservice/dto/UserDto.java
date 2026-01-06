@@ -1,23 +1,18 @@
-package com.codewithkz.userservice.entity;
+package com.codewithkz.authservice.dto;
 
-import jakarta.persistence.*;
+import com.codewithkz.authservice.entity.Roles;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "users")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UserDto {
     private Long id;
     private String name;
     private String email;
-    private String password;
-
+    private Roles role;
 }

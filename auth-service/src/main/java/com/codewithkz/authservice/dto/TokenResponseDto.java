@@ -1,4 +1,4 @@
-package com.codewithkz.userservice.dto;
+package com.codewithkz.authservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,11 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class CreateDto {
-    private String name;
-    private String email;
-    private String password;
+public class TokenResponseDto {
+    private String accessToken;
+    private String refreshToken;
 }

@@ -1,4 +1,4 @@
-package com.codewithkz.userservice.entity;
+package com.codewithkz.authservice.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,5 +19,8 @@ public class User {
     private String name;
     private String email;
     private String password;
-
+    @Enumerated(EnumType.STRING)
+    private Roles role = Roles.USER;
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.ACTIVE;
 }

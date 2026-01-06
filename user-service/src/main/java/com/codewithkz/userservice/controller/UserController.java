@@ -1,7 +1,6 @@
 package com.codewithkz.userservice.controller;
 
 import com.codewithkz.userservice.core.response.ApiResponse;
-import com.codewithkz.userservice.dto.CreateDto;
 import com.codewithkz.userservice.dto.UserDto;
 import com.codewithkz.userservice.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -27,10 +26,4 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(users));
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<UserDto>> create(@RequestBody CreateDto dto) {
-        var result = service.create(dto);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(result));
-    }
 }
