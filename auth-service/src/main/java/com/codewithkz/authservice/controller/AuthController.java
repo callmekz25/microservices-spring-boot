@@ -40,14 +40,14 @@ public class AuthController {
     }
 
     @PostMapping("refreshToken")
-    public ResponseEntity<ApiResponse<TokenResponseDto>> refreshToken(HttpServletRequest request, @RequestBody String refreshToken) {
+    public ResponseEntity<ApiResponse<TokenResponseDto>> refreshToken(HttpServletRequest request, @RequestBody RefreshTokenRequestDto dto) {
         var authHeader = request.getHeader("authorization");
         var accessToken = authHeader.substring(7);
 
         var result = service.refreshToken(RefreshTokenDto
                 .builder()
                 .accessToken(accessToken)
-                .refreshToken(refreshToken)
+                .refreshToken(dto.getRefreshToken())
                 .build());
 
         return ResponseEntity.ok(ApiResponse.success(result));

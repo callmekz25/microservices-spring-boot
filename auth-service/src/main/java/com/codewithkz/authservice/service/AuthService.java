@@ -13,6 +13,7 @@ import com.codewithkz.authservice.repository.AuthRepository;
 import com.codewithkz.authservice.repository.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AuthService {
 
@@ -56,7 +58,7 @@ public class AuthService {
 
     @Transactional
     public TokenResponseDto login(LoginDto dto) {
-        var user = repo.findByEmail(dto.getEmail()).orElseThrow(() -> new NotFoundException("Email not found"));
+        var user = repo.findByEmail(dto.getEmail()).orElseThrow(() ->  new BadRequestException("Invalid email or password"));
 
         var isValid = passwordEncoder.matches(dto.getPassword(), user.getPassword());
 
@@ -70,7 +72,7 @@ public class AuthService {
         var refreshEntity = RefreshToken
                 .builder()
                 .token(refreshToken)
-                .expiredAt(Instant.now())
+                .expiredAt(Instant.now().plusMillis(jwtService.getRefreshTokenExpiration()))
                 .user(user)
                 .build();
 
@@ -88,11 +90,16 @@ public class AuthService {
 
     @Transactional
     public TokenResponseDto refreshToken(RefreshTokenDto dto) {
+        log.info("Access token: {}", dto.getAccessToken());
+        log.info("Refresh token: {}", dto.getRefreshToken());
         Instant now = Instant.now();
         var refreshEntity = repoRefresh
-                .findByTokenAndIsRevokedFalseAndExpiredAtAfter(dto.getRefreshToken(), now)
+                .findByTokenAndIsRevokedFalse(dto.getRefreshToken())
                 .orElseThrow(() -> new UnauthorizedException("Refresh token is invalid"));
 
+        if(refreshEntity.getExpiredAt().isBefore(now)) {
+            throw new UnauthorizedException("Refresh token is expired");
+        }
 
         Claims claims = jwtService.extractToken(dto.getRefreshToken());
 
@@ -102,6 +109,11 @@ public class AuthService {
 
         var accessToken = jwtService.generateAccessToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
+
+        refreshEntity.setRevoked(true);
+        repoRefresh.save(refreshEntity);
+
+        log.info("Refresh token successfully");
 
         return TokenResponseDto
                 .builder()
