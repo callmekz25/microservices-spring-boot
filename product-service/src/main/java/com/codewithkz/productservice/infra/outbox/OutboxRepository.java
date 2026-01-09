@@ -1,4 +1,4 @@
-package com.codewithkz.orderservice.infra.outbox;
+package com.codewithkz.productservice.infra.outbox;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

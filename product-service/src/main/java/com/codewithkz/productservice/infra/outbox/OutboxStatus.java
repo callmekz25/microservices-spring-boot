@@ -1,4 +1,4 @@
-package com.codewithkz.orderservice.infra.outbox;
+package com.codewithkz.productservice.infra.outbox;
 
 public enum OutboxStatus {
     PENDING,

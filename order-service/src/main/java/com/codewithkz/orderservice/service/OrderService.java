@@ -70,7 +70,6 @@ public class OrderService {
 
         outboxService.save(RabbitMQConfig.ORDER_CREATED_ROUTING_KEY, RabbitMQConfig.ORDER_CREATED_ROUTING_KEY, event);
 
-//        publisher.publishOrderCreated(event);
 
         return mapper.toDto(order);
 

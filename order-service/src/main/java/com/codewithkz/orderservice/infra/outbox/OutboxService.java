@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -23,6 +25,8 @@ public class OutboxService {
                             .event(event)
                             .destination(destination)
                             .payload(objectMapper.writeValueAsString(payload))
+                            .createdAt(Instant.now())
+                            .status(OutboxStatus.PENDING)
                             .build()
             );
             log.info("Saved OutboxEvent: {}", event);

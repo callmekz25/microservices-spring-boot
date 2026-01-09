@@ -1,6 +1,8 @@
 package com.codewithkz.paymentservice.infra.outbox;
 
 import com.codewithkz.paymentservice.infra.config.RabbitMQConfig;
+import com.codewithkz.paymentservice.utils.EventRegistry;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -18,6 +20,8 @@ public class OutboxSchedule {
 
     private final RabbitTemplate rabbitTemplate;
     private final OutboxRepository repo;
+    private final ObjectMapper objectMapper;
+    private final EventRegistry eventRegistry;
 
     @Scheduled(fixedDelay = 1000)
     @Transactional
@@ -28,10 +32,14 @@ public class OutboxSchedule {
 
         for (OutboxEvent e : events) {
             try {
+                var eventClass = eventRegistry.get(e.getEvent());
+
+                var payload = objectMapper.readValue(e.getPayload(), eventClass);
+
                 rabbitTemplate.convertAndSend(
                         RabbitMQConfig.PAYMENT_EXCHANGE,
                         e.getDestination(),
-                        e.getPayload()
+                        payload
                 );
 
                 e.setStatus(OutboxStatus.COMPLETED);

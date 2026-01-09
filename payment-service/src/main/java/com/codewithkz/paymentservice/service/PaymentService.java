@@ -4,9 +4,11 @@ import com.codewithkz.paymentservice.core.exception.NotFoundException;
 import com.codewithkz.paymentservice.dto.CreatePaymentDto;
 import com.codewithkz.paymentservice.dto.PaymentDto;
 import com.codewithkz.paymentservice.entity.Payment;
+import com.codewithkz.paymentservice.infra.config.RabbitMQConfig;
 import com.codewithkz.paymentservice.infra.event.InventoryReservedEvent;
 import com.codewithkz.paymentservice.infra.event.PaymentCompletedEvent;
 import com.codewithkz.paymentservice.infra.event.PaymentFailedEvent;
+import com.codewithkz.paymentservice.infra.outbox.OutboxService;
 import com.codewithkz.paymentservice.mapper.PaymentMapper;
 import com.codewithkz.paymentservice.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class PaymentService {
 
     private final PaymentRepository repo;
     private final PaymentMapper mapper;
+    private final OutboxService outboxService;
 
 
     public List<PaymentDto> findAll() {
@@ -51,6 +54,10 @@ public class PaymentService {
             var paymentCompletedEvent = PaymentCompletedEvent.builder()
                     .orderId(event.getOrderId()).build();
 
+            outboxService.save(RabbitMQConfig.PAYMENT_COMPLETED_ROUTING_KEY,
+                    RabbitMQConfig.PAYMENT_COMPLETED_ROUTING_KEY,
+                    paymentCompletedEvent);
+
 
 
         }catch (Exception e) {
@@ -63,6 +70,9 @@ public class PaymentService {
                     .reason(e.getMessage())
                     .build();
 
+            outboxService.save(RabbitMQConfig.PAYMENT_FAILED_ROUTING_KEY,
+                    RabbitMQConfig.PAYMENT_FAILED_ROUTING_KEY,
+                    paymentFailedEvent);
 
         }
     }

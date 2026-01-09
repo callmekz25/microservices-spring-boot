@@ -7,29 +7,28 @@ import com.codewithkz.productservice.dto.InventoryDto;
 import com.codewithkz.productservice.dto.ProductDto;
 import com.codewithkz.productservice.dto.ProductInventoryDto;
 import com.codewithkz.productservice.entity.Product;
+import com.codewithkz.productservice.infra.outbox.OutboxService;
+import com.codewithkz.productservice.infra.rabbitmq.config.RabbitMQConfig;
 import com.codewithkz.productservice.infra.rabbitmq.event.ProductCreatedEvent;
 import com.codewithkz.productservice.infra.rabbitmq.publisher.ProductEventPublisher;
 import com.codewithkz.productservice.mapper.ProductMapper;
 import com.codewithkz.productservice.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository repo;
     private final ProductMapper mapper;
-    private final ProductEventPublisher publisher;
+    private final OutboxService outboxService;
     private final InventoryClient inventoryClient;
 
-    public ProductService(ProductRepository repo, ProductMapper mapper, ProductEventPublisher publisher, InventoryClient inventoryClient) {
-        this.repo = repo;
-        this.mapper = mapper;
-        this.publisher = publisher;
-        this.inventoryClient = inventoryClient;
-    }
+
 
     public List<ProductDto> finAll() {
         List<Product> entities = repo.findAll();
@@ -43,9 +42,16 @@ public class ProductService {
 
         repo.save(entity);
 
-        publisher.publishProductCreated(
-                new ProductCreatedEvent(entity.getId(), dto.getQuantity())
-        );
+        var event = ProductCreatedEvent
+                .builder()
+                .productId(entity.getId())
+                .quantity(dto.getQuantity())
+                .build();
+
+        outboxService.save(RabbitMQConfig.PRODUCT_CREATED_ROUTING_KEY,
+                RabbitMQConfig.PRODUCT_CREATED_ROUTING_KEY,
+                event);
+
 
         return mapper.toDto(entity);
     }
