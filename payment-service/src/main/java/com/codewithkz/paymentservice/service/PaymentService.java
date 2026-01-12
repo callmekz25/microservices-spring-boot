@@ -1,6 +1,7 @@
 package com.codewithkz.paymentservice.service;
 
-import com.codewithkz.paymentservice.core.exception.NotFoundException;
+
+import com.codewithkz.commoncore.exception.NotFoundException;
 import com.codewithkz.paymentservice.dto.CreatePaymentDto;
 import com.codewithkz.paymentservice.dto.PaymentDto;
 import com.codewithkz.paymentservice.entity.Payment;

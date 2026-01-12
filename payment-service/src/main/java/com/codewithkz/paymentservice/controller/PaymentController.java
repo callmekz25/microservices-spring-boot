@@ -1,6 +1,6 @@
 package com.codewithkz.paymentservice.controller;
 
-import com.codewithkz.paymentservice.core.response.ApiResponse;
+import com.codewithkz.commoncore.response.ApiResponse;
 import com.codewithkz.paymentservice.dto.PaymentDto;
 import com.codewithkz.paymentservice.service.PaymentService;
 import lombok.RequiredArgsConstructor;

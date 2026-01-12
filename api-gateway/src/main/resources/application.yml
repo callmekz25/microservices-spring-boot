@@ -10,13 +10,9 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: product-service-public
-          uri: lb://product-service
-          predicates:
-            - Path=/api/products/**
-            - Method=GET
 
-        - id: product-service-protected
+
+        - id: product-service
           uri: lb://product-service
           predicates:
             - Path=/api/products/**

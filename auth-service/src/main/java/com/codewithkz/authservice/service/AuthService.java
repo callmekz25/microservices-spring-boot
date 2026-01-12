@@ -1,9 +1,5 @@
 package com.codewithkz.authservice.service;
 
-import com.codewithkz.authservice.core.exception.BadRequestException;
-import com.codewithkz.authservice.core.exception.DuplicateException;
-import com.codewithkz.authservice.core.exception.NotFoundException;
-import com.codewithkz.authservice.core.exception.UnauthorizedException;
 import com.codewithkz.authservice.dto.*;
 import com.codewithkz.authservice.entity.RefreshToken;
 import com.codewithkz.authservice.entity.Roles;
@@ -11,6 +7,10 @@ import com.codewithkz.authservice.entity.User;
 import com.codewithkz.authservice.mapper.UserMapper;
 import com.codewithkz.authservice.repository.AuthRepository;
 import com.codewithkz.authservice.repository.RefreshTokenRepository;
+import com.codewithkz.commoncore.exception.BadRequestException;
+import com.codewithkz.commoncore.exception.DuplicateException;
+import com.codewithkz.commoncore.exception.NotFoundException;
+import com.codewithkz.commoncore.exception.UnauthorizedException;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

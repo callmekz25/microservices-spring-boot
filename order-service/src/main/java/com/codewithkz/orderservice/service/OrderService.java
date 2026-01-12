@@ -1,18 +1,15 @@
 package com.codewithkz.orderservice.service;
 
-import com.codewithkz.orderservice.core.exception.NotFoundException;
+import com.codewithkz.commoncore.exception.NotFoundException;
 import com.codewithkz.orderservice.dto.CreateOrderDto;
-import com.codewithkz.orderservice.dto.InventoryDto;
 import com.codewithkz.orderservice.dto.OrderDto;
 import com.codewithkz.orderservice.dto.ProductDto;
 import com.codewithkz.orderservice.entity.Order;
 import com.codewithkz.orderservice.entity.OrderStatus;
-import com.codewithkz.orderservice.infra.client.InventoryClient;
 import com.codewithkz.orderservice.infra.client.ProductClient;
 import com.codewithkz.orderservice.infra.outbox.OutboxService;
 import com.codewithkz.orderservice.infra.rabbitmq.config.RabbitMQConfig;
 import com.codewithkz.orderservice.infra.rabbitmq.event.OrderCreatedEvent;
-import com.codewithkz.orderservice.infra.rabbitmq.publisher.OrderEventPublisher;
 import com.codewithkz.orderservice.mapper.OrderMapper;
 import com.codewithkz.orderservice.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +25,6 @@ public class OrderService {
     private final OrderRepository repo;
     private final OrderMapper mapper;
     private final ProductClient productClient;
-    private final OrderEventPublisher publisher;
     private final OutboxService outboxService;
 
 

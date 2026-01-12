@@ -1,7 +1,7 @@
 package com.codewithkz.inventoryservice.service;
 
 
-import com.codewithkz.inventoryservice.core.exception.NotFoundException;
+import com.codewithkz.commoncore.exception.NotFoundException;
 import com.codewithkz.inventoryservice.dto.InventoryDto;
 import com.codewithkz.inventoryservice.entity.Inventory;
 import com.codewithkz.inventoryservice.infra.outbox.OutboxService;

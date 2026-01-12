@@ -1,6 +1,6 @@
 package com.codewithkz.orderservice.controller;
 
-import com.codewithkz.orderservice.core.response.ApiResponse;
+import com.codewithkz.commoncore.response.ApiResponse;
 import com.codewithkz.orderservice.dto.CreateOrderDto;
 import com.codewithkz.orderservice.dto.OrderDto;
 import com.codewithkz.orderservice.service.OrderService;

@@ -1,6 +1,6 @@
 package com.codewithkz.productservice.controller;
 
-import com.codewithkz.productservice.core.response.ApiResponse;
+import com.codewithkz.commoncore.response.ApiResponse;
 import com.codewithkz.productservice.dto.CreateDto;
 import com.codewithkz.productservice.dto.ProductDto;
 import com.codewithkz.productservice.dto.ProductInventoryDto;

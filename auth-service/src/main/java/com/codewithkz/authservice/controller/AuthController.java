@@ -1,8 +1,8 @@
 package com.codewithkz.authservice.controller;
 
-import com.codewithkz.authservice.core.response.ApiResponse;
 import com.codewithkz.authservice.dto.*;
 import com.codewithkz.authservice.service.AuthService;
+import com.codewithkz.commoncore.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

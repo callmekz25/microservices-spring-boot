@@ -1,7 +1,7 @@
 package com.codewithkz.productservice.service;
 
+import com.codewithkz.commoncore.exception.NotFoundException;
 import com.codewithkz.productservice.infra.client.InventoryClient;
-import com.codewithkz.productservice.core.exception.NotFoundException;
 import com.codewithkz.productservice.dto.CreateDto;
 import com.codewithkz.productservice.dto.InventoryDto;
 import com.codewithkz.productservice.dto.ProductDto;
@@ -10,10 +10,10 @@ import com.codewithkz.productservice.entity.Product;
 import com.codewithkz.productservice.infra.outbox.OutboxService;
 import com.codewithkz.productservice.infra.rabbitmq.config.RabbitMQConfig;
 import com.codewithkz.productservice.infra.rabbitmq.event.ProductCreatedEvent;
-import com.codewithkz.productservice.infra.rabbitmq.publisher.ProductEventPublisher;
 import com.codewithkz.productservice.mapper.ProductMapper;
 import com.codewithkz.productservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,12 +30,14 @@ public class ProductService {
 
 
 
+//    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     public List<ProductDto> finAll() {
         List<Product> entities = repo.findAll();
 
         return mapper.toDtoList(entities);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @Transactional
     public ProductDto create(CreateDto dto) {
         Product entity = mapper.toEntity(dto);

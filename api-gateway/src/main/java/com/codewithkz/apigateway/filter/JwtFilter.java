@@ -1,6 +1,6 @@
 package com.codewithkz.apigateway.filter;
 
-import com.codewithkz.apigateway.core.response.ApiResponse;
+import com.codewithkz.commoncore.response.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -11,22 +11,32 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Component
 public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
+
+    private List<String> publicApi = List.of(
+            "/api/auth/login",
+            "/api/auth/register"
+    );
 
     @Value("${jwt.secret}")
     private String secret;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     public JwtFilter() {
         super(Config.class);
@@ -35,6 +45,19 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
+
+            String path = exchange.getRequest().getPath().value();
+            String method = exchange.getRequest().getMethod().name();
+
+            if ("GET".equalsIgnoreCase(method) && pathMatcher.match("/api/products/**", path)) {
+                return chain.filter(exchange);
+            }
+
+            for (String publicPath : publicApi) {
+                if (pathMatcher.match(publicPath, path)) {
+                    return chain.filter(exchange);
+                }
+            }
 
             String authHeader = exchange.getRequest()
                     .getHeaders()

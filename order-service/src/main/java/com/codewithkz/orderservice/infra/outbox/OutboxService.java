@@ -1,6 +1,6 @@
 package com.codewithkz.orderservice.infra.outbox;
 
-import com.codewithkz.orderservice.core.exception.BadRequestException;
+import com.codewithkz.commoncore.exception.BadRequestException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

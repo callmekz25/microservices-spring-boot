@@ -1,7 +1,7 @@
 package com.codewithkz.inventoryservice.controller;
 
 
-import com.codewithkz.inventoryservice.core.response.ApiResponse;
+import com.codewithkz.commoncore.response.ApiResponse;
 import com.codewithkz.inventoryservice.dto.InventoryDto;
 import com.codewithkz.inventoryservice.service.InventoryService;
 import jakarta.servlet.http.HttpServletRequest;

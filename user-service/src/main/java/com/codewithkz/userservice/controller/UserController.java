@@ -1,9 +1,8 @@
 package com.codewithkz.userservice.controller;
 
-import com.codewithkz.userservice.core.response.ApiResponse;
+import com.codewithkz.commoncore.response.ApiResponse;
 import com.codewithkz.userservice.dto.UserDto;
 import com.codewithkz.userservice.service.UserService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

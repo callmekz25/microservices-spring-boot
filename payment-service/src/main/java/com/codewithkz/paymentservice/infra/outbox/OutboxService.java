@@ -1,6 +1,6 @@
 package com.codewithkz.paymentservice.infra.outbox;
 
-import com.codewithkz.paymentservice.core.exception.BadRequestException;
+import com.codewithkz.commoncore.exception.BadRequestException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
