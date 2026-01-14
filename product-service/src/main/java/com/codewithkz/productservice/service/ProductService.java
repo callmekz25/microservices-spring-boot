@@ -30,7 +30,7 @@ public class ProductService {
 
 
 
-//    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
+//    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public List<ProductDto> finAll() {
         List<Product> entities = repo.findAll();
 

@@ -18,6 +18,4 @@ public class Inventory {
     private Long id;
     private Long productId;
     private int quantity;
-    @Version
-    private Long version;
 }

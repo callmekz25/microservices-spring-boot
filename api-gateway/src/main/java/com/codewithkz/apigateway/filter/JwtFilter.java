@@ -1,17 +1,16 @@
 package com.codewithkz.apigateway.filter;
 
+import com.codewithkz.commoncore.constant.GatewayHeaders;
 import com.codewithkz.commoncore.response.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -21,9 +20,11 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.List;
 
 @Component
+@Slf4j
 public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
 
     private List<String> publicApi = List.of(
@@ -33,6 +34,9 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
 
     @Value("${jwt.secret}")
     private String secret;
+
+    @Value("${jwt.internalSecret}")
+    private String internalSecret;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -48,6 +52,7 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
 
             String path = exchange.getRequest().getPath().value();
             String method = exchange.getRequest().getMethod().name();
+            log.info("Request to {}", path);
 
             if ("GET".equalsIgnoreCase(method) && pathMatcher.match("/api/products/**", path)) {
                 return chain.filter(exchange);
@@ -64,8 +69,7 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
                     .getFirst(HttpHeaders.AUTHORIZATION);
 
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                return exchange.getResponse().setComplete();
+                return unauthorized(exchange, "Missing token");
             }
 
             String token = authHeader.substring(7);
@@ -77,12 +81,28 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
                         .parseClaimsJws(token)
                         .getBody();
 
+                String internalToken = Jwts.builder()
+                        .setSubject(claims.getSubject())
+                        .claim("role", claims.get("role"))
+                        .setIssuedAt(new Date())
+                        .setExpiration(new Date(System.currentTimeMillis() + 60_000))
+                        .signWith(
+                                Keys.hmacShaKeyFor(internalSecret.getBytes(StandardCharsets.UTF_8)),
+                                SignatureAlgorithm.HS256
+                        )
+                        .compact();
+
+                log.info("Internal Token: {}", internalToken);
+
+
                 ServerHttpRequest request = exchange.getRequest()
                         .mutate()
-                        .header("X-User-Id", claims.getSubject())
-                        .header("X-Role", claims.get("role", String.class))
+                        .headers(httpHeaders -> {
+                            httpHeaders.remove(GatewayHeaders.TOKEN);
+                            httpHeaders.add(GatewayHeaders.TOKEN, internalToken);
+                        })
                         .build();
-
+                log.info("Header Token {}", request.getHeaders().getFirst(GatewayHeaders.TOKEN));
                 return chain.filter(exchange.mutate().request(request).build());
 
             }

@@ -11,10 +11,12 @@ import com.codewithkz.inventoryservice.mapper.InventoryMapper;
 import com.codewithkz.inventoryservice.repository.InventoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -26,6 +28,7 @@ public class InventoryService {
     private final OutboxService outboxService;
 
 
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public List<InventoryDto> findAll() {
         List<Inventory> inventories = repo.findAll();
 
@@ -49,7 +52,6 @@ public class InventoryService {
 
     @Transactional
     public void handleOrderCreated(OrderCreatedEvent event) {
-
 
         boolean reserved = repo.decreaseQuantity(event.getProductId(), event.getQuantity()) == 1;
         if(reserved) {
@@ -81,8 +83,8 @@ public class InventoryService {
         if(released) {
             InventoryReleasedEvent eventReleased =
                     InventoryReleasedEvent
-                    .builder()
-                    .orderId(event.getOrderId()).build();
+                            .builder()
+                            .orderId(event.getOrderId()).build();
 
             outboxService.save(RabbitMQConfig.INVENTORY_RELEASED_ROUTING_KEY, RabbitMQConfig.INVENTORY_RELEASED_ROUTING_KEY, eventReleased);
 
@@ -90,6 +92,7 @@ public class InventoryService {
         } else {
             log.error("Failed to release inventory event: {}", event.getOrderId());
         }
+
     }
 
 

@@ -13,6 +13,7 @@ import com.codewithkz.orderservice.infra.rabbitmq.event.OrderCreatedEvent;
 import com.codewithkz.orderservice.mapper.OrderMapper;
 import com.codewithkz.orderservice.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,7 @@ public class OrderService {
 
 
 
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public List<OrderDto> findAll() {
         List<Order> orders = repo.findAll();
 

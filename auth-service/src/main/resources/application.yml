@@ -3,6 +3,7 @@ server:
 
 jwt:
   secret: cDQgcWIx2cd6Dnj1Za0FmPNFOB5dmW1A
+  internalSecret: 9GSHO1glgDuEOAQrMps44LitSeaVNmMI40bl7Sxra30zZ2nXylPrzsbfgTVftLXE
   access-token-expiration: 900000      # 15 min
   refresh-token-expiration: 2592000000  # 30 days
 

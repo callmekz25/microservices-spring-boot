@@ -1,6 +1,9 @@
 server:
   port: 8082
 
+jwt:
+  internalSecret: 9GSHO1glgDuEOAQrMps44LitSeaVNmMI40bl7Sxra30zZ2nXylPrzsbfgTVftLXE
+
 spring:
   datasource:
     url: jdbc:h2:mem:productdb
