@@ -3,7 +3,7 @@ package com.codewithkz.inventoryservice.controller;
 
 import com.codewithkz.commoncore.response.ApiResponse;
 import com.codewithkz.inventoryservice.dto.InventoryDto;
-import com.codewithkz.inventoryservice.service.InventoryService;
+import com.codewithkz.inventoryservice.service.impl.InventoryServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +19,9 @@ import java.util.List;
 @RequestMapping("/api/inventories")
 public class InventoryController {
 
-    private final InventoryService service;
+    private final InventoryServiceImpl service;
 
-    public InventoryController(InventoryService service) {
+    public InventoryController(InventoryServiceImpl service) {
         this.service = service;
     }
 

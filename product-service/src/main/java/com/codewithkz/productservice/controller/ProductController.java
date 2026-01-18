@@ -4,7 +4,7 @@ import com.codewithkz.commoncore.response.ApiResponse;
 import com.codewithkz.productservice.dto.CreateDto;
 import com.codewithkz.productservice.dto.ProductDto;
 import com.codewithkz.productservice.dto.ProductInventoryDto;
-import com.codewithkz.productservice.service.ProductService;
+import com.codewithkz.productservice.service.impl.ProductServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +15,9 @@ import java.util.List;
 @RequestMapping("/api/products")
 public class ProductController {
 
-    private final ProductService service;
+    private final ProductServiceImpl service;
 
-    public ProductController(ProductService service) {
+    public ProductController(ProductServiceImpl service) {
         this.service = service;
     }
 

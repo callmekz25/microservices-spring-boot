@@ -1,9 +1,9 @@
 package com.codewithkz.paymentservice.utils;
 
-import com.codewithkz.paymentservice.infra.config.RabbitMQConfig;
-import com.codewithkz.paymentservice.infra.event.InventoryReservedEvent;
-import com.codewithkz.paymentservice.infra.event.PaymentCompletedEvent;
-import com.codewithkz.paymentservice.infra.event.PaymentFailedEvent;
+import com.codewithkz.paymentservice.config.RabbitMQConfig;
+import com.codewithkz.paymentservice.event.InventoryReservedEvent;
+import com.codewithkz.paymentservice.event.PaymentCompletedEvent;
+import com.codewithkz.paymentservice.event.PaymentFailedEvent;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

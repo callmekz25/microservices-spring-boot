@@ -5,8 +5,7 @@ import com.codewithkz.commoncore.exception.BadRequestException;
 import com.codewithkz.productservice.controller.ProductController;
 import com.codewithkz.productservice.dto.CreateDto;
 import com.codewithkz.productservice.dto.ProductDto;
-import com.codewithkz.productservice.entity.Product;
-import com.codewithkz.productservice.service.ProductService;
+import com.codewithkz.productservice.service.impl.ProductServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -35,7 +34,7 @@ public class ProductControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private ProductService productService;
+    private ProductServiceImpl productService;
 
     @Test
     public void findAll() throws Exception {

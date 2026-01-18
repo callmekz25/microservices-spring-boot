@@ -1,6 +1,6 @@
 package com.codewithkz.orderservice.config;
 
-import com.codewithkz.commoncore.filters.JwtAuthenticationFilter;
+import com.codewithkz.commoncore.filters.GatewaySecurityFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,8 +10,10 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -23,21 +25,22 @@ public class SecurityConfig {
     @Value("${jwt.internalSecret}")
     private String internalSecret;
 
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(
-            ObjectMapper objectMapper
-    ) {
-        return new JwtAuthenticationFilter(objectMapper, internalSecret);
-    }
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter filter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(sessionManagement ->
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .authorizeHttpRequests(
                         auth -> auth
                         .anyRequest().authenticated()
-                ).addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+                ).addFilterBefore(new GatewaySecurityFilter(objectMapper, internalSecret) , BasicAuthenticationFilter.class)
+                .httpBasic(basic -> basic.disable());
 
         return http.build();
     }

@@ -1,10 +1,9 @@
 package com.codewithkz.orderservice.controller;
 
-import com.codewithkz.commoncore.constant.GatewayHeaders;
 import com.codewithkz.commoncore.response.ApiResponse;
 import com.codewithkz.orderservice.dto.CreateOrderDto;
 import com.codewithkz.orderservice.dto.OrderDto;
-import com.codewithkz.orderservice.service.OrderService;
+import com.codewithkz.orderservice.service.impl.OrderServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +16,9 @@ import java.util.List;
 @Slf4j
 public class OrderController {
 
-    private final OrderService service;
+    private final OrderServiceImpl service;
 
-    public OrderController(OrderService service) {
+    public OrderController(OrderServiceImpl service) {
         this.service = service;
     }
 
@@ -31,10 +30,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<OrderDto>> create(HttpServletRequest request, @RequestBody CreateOrderDto dto) {
-        var userId = Long.parseLong((String) request.getAttribute("userId"));
-        log.info("userId = " + userId);
-        dto.setUserId(userId);
+    public ResponseEntity<ApiResponse<OrderDto>> create(@RequestBody CreateOrderDto dto) {
         var order = service.create(dto);
 
         return ResponseEntity.ok(ApiResponse.success(order));

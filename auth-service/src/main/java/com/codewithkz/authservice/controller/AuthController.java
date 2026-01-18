@@ -1,7 +1,7 @@
 package com.codewithkz.authservice.controller;
 
 import com.codewithkz.authservice.dto.*;
-import com.codewithkz.authservice.service.AuthService;
+import com.codewithkz.authservice.service.impl.AuthServiceImpl;
 import com.codewithkz.commoncore.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final AuthService service;
+    private final AuthServiceImpl service;
 
-    public AuthController(AuthService service) {
+    public AuthController(AuthServiceImpl service) {
         this.service = service;
     }
 

@@ -1,10 +1,10 @@
 package com.codewithkz.orderservice.utils;
 
-import com.codewithkz.orderservice.infra.rabbitmq.config.RabbitMQConfig;
-import com.codewithkz.orderservice.infra.rabbitmq.event.InventoryRejectedEvent;
-import com.codewithkz.orderservice.infra.rabbitmq.event.InventoryReleasedEvent;
-import com.codewithkz.orderservice.infra.rabbitmq.event.OrderCreatedEvent;
-import com.codewithkz.orderservice.infra.rabbitmq.event.PaymentCompletedEvent;
+import com.codewithkz.orderservice.config.RabbitMQConfig;
+import com.codewithkz.orderservice.event.InventoryRejectedEvent;
+import com.codewithkz.orderservice.event.InventoryReleasedEvent;
+import com.codewithkz.orderservice.event.OrderCreatedEvent;
+import com.codewithkz.orderservice.event.PaymentCompletedEvent;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

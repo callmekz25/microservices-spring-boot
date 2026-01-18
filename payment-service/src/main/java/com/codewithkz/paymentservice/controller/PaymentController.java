@@ -2,7 +2,7 @@ package com.codewithkz.paymentservice.controller;
 
 import com.codewithkz.commoncore.response.ApiResponse;
 import com.codewithkz.paymentservice.dto.PaymentDto;
-import com.codewithkz.paymentservice.service.PaymentService;
+import com.codewithkz.paymentservice.service.impl.PaymentServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PaymentController {
 
-    private final PaymentService service;
+    private final PaymentServiceImpl service;
 
 
     @GetMapping

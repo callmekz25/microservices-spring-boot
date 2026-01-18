@@ -1,8 +1,8 @@
 package com.codewithkz.inventoryservice.utils;
 
 
-import com.codewithkz.inventoryservice.infra.rabbitmq.config.RabbitMQConfig;
-import com.codewithkz.inventoryservice.infra.rabbitmq.event.*;
+import com.codewithkz.inventoryservice.config.RabbitMQConfig;
+import com.codewithkz.inventoryservice.event.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

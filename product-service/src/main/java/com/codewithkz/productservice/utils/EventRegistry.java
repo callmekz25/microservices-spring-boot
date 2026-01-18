@@ -1,7 +1,7 @@
 package com.codewithkz.productservice.utils;
 
-import com.codewithkz.productservice.infra.rabbitmq.config.RabbitMQConfig;
-import com.codewithkz.productservice.infra.rabbitmq.event.ProductCreatedEvent;
+import com.codewithkz.productservice.config.RabbitMQConfig;
+import com.codewithkz.productservice.event.ProductCreatedEvent;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

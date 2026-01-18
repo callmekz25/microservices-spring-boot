@@ -5,11 +5,11 @@ import com.codewithkz.commoncore.exception.NotFoundException;
 import com.codewithkz.productservice.dto.CreateDto;
 import com.codewithkz.productservice.dto.ProductDto;
 import com.codewithkz.productservice.entity.Product;
-import com.codewithkz.productservice.infra.outbox.OutboxService;
-import com.codewithkz.productservice.infra.rabbitmq.config.RabbitMQConfig;
+import com.codewithkz.productservice.service.impl.OutboxServiceImpl;
+import com.codewithkz.productservice.config.RabbitMQConfig;
 import com.codewithkz.productservice.mapper.ProductMapper;
 import com.codewithkz.productservice.repository.ProductRepository;
-import com.codewithkz.productservice.service.ProductService;
+import com.codewithkz.productservice.service.impl.ProductServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,13 +29,13 @@ public class ProductServiceTest {
     private ProductRepository productRepository;
 
     @Mock
-    private OutboxService outboxService;
+    private OutboxServiceImpl outboxService;
 
     @Mock
     private ProductMapper productMapper;
 
     @InjectMocks
-    private ProductService productService;
+    private ProductServiceImpl productService;
 
     @Test
     public void shouldReturnAllProducts() {

@@ -8,50 +8,50 @@ jwt:
 spring:
   application:
     name: api-gateway
-  cloud:
-    gateway:
-      routes:
-
-
-        - id: product-service
-          uri: lb://product-service
-          predicates:
-            - Path=/api/products/**
-          filters:
-            - JwtFilter
-
-        - id: user-service
-          uri: lb://user-service
-          predicates:
-            - Path=/api/users/**
-          filters:
-            - JwtFilter
-
-        - id: auth-service
-          uri: lb://auth-service
-          predicates:
-            - Path=/api/auth/**
-
-        - id: inventory-service
-          uri: lb://inventory-service
-          predicates:
-            - Path=/api/inventories/**
-          filters:
-            - JwtFilter
-
-        - id: order-service
-          uri: lb://order-service
-          predicates:
-            - Path=/api/orders/**
-          filters:
-            - JwtFilter
-
-        - id: payment-service
-          uri: lb://payment-service
-          predicates:
-            - Path=/api/payments/**
-          filters:
-            - JwtFilter
+#  cloud:
+#    gateway:
+#      routes:
+#
+#
+#        - id: product-service
+#          uri: lb://product-service
+#          predicates:
+#            - Path=/api/products/**
+#          filters:
+#            - JwtFilter
+#
+#        - id: user-service
+#          uri: lb://user-service
+#          predicates:
+#            - Path=/api/users/**
+#          filters:
+#            - JwtFilter
+#
+#        - id: auth-service
+#          uri: lb://auth-service
+#          predicates:
+#            - Path=/api/auth/**
+#
+#        - id: inventory-service
+#          uri: lb://inventory-service
+#          predicates:
+#            - Path=/api/inventories/**
+#          filters:
+#            - JwtFilter
+#
+#        - id: order-service
+#          uri: lb://order-service
+#          predicates:
+#            - Path=/api/orders/**
+#          filters:
+#            - JwtFilter
+#
+#        - id: payment-service
+#          uri: lb://payment-service
+#          predicates:
+#            - Path=/api/payments/**
+#          filters:
+#            - JwtFilter
 
 eureka:
   client:
