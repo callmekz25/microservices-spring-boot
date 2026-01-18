@@ -1,6 +1,7 @@
 package com.codewithkz.authservice.service.impl;
 
 import com.codewithkz.authservice.entity.User;
+import com.codewithkz.authservice.entity.UserPrincipal;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -32,7 +33,7 @@ public class JwtService {
     }
 
 
-    public String generateAccessToken(User user) {
+    public String generateAccessToken(UserPrincipal user) {
         return Jwts.builder()
                 .setSubject(user.getId().toString())
                 .claim("email", user.getEmail())
@@ -44,9 +45,9 @@ public class JwtService {
     }
 
 
-    public String generateRefreshToken(User user) {
+    public String generateRefreshToken(Long userId) {
         return Jwts.builder()
-                .setSubject(user.getId().toString())
+                .setSubject(userId.toString())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)

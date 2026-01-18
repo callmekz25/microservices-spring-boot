@@ -4,6 +4,7 @@ import com.codewithkz.authservice.dto.*;
 import com.codewithkz.authservice.entity.RefreshToken;
 import com.codewithkz.authservice.entity.Roles;
 import com.codewithkz.authservice.entity.User;
+import com.codewithkz.authservice.entity.UserPrincipal;
 import com.codewithkz.authservice.mapper.UserMapper;
 import com.codewithkz.authservice.repository.AuthRepository;
 import com.codewithkz.authservice.repository.RefreshTokenRepository;
@@ -15,6 +16,9 @@ import com.codewithkz.commoncore.exception.UnauthorizedException;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +35,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserMapper mapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
 
     @Override
@@ -62,16 +67,25 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public TokenResponseDto login(LoginDto dto) {
-        var user = repo.findByEmail(dto.getEmail()).orElseThrow(() ->  new BadRequestException("Invalid email or password"));
 
-        var isValid = passwordEncoder.matches(dto.getPassword(), user.getPassword());
+        Authentication authentication =
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                dto.getEmail(),
+                                dto.getPassword()
+                        )
+                );
 
-        if (!isValid) {
-            throw new BadRequestException("Invalid email or password");
-        }
 
-        var accessToken = jwtService.generateAccessToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
+        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+
+        User user = repo.findById(principal.getId())
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        var accessToken = jwtService.generateAccessToken(principal);
+        var refreshToken = jwtService.generateRefreshToken(user.getId());
+
+
 
         var refreshEntity = RefreshToken
                 .builder()
@@ -95,9 +109,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public TokenResponseDto refreshToken(RefreshTokenDto dto) {
-        log.info("Access token: {}", dto.getAccessToken());
-        log.info("Refresh token: {}", dto.getRefreshToken());
+
         Instant now = Instant.now();
+
         var refreshEntity = repoRefresh
                 .findByTokenAndIsRevokedFalse(dto.getRefreshToken())
                 .orElseThrow(() -> new UnauthorizedException("Refresh token is invalid"));
@@ -106,17 +120,28 @@ public class AuthServiceImpl implements AuthService {
             throw new UnauthorizedException("Refresh token is expired");
         }
 
-        Claims claims = jwtService.extractToken(dto.getRefreshToken());
-
-        Long userId = Long.parseLong(claims.getSubject());
-        var user = repo.findById(userId).orElseThrow(() -> new UnauthorizedException("Token is valid or expired"));
-
-
-        var accessToken = jwtService.generateAccessToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
+        User user = refreshEntity.getUser();
 
         refreshEntity.setRevoked(true);
         repoRefresh.save(refreshEntity);
+
+        UserPrincipal principal = new UserPrincipal(
+                user.getId(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getRole().name()
+        );
+
+        var accessToken = jwtService.generateAccessToken(principal);
+        var refreshToken = jwtService.generateRefreshToken(user.getId());
+
+        RefreshToken newRefresh = RefreshToken.builder()
+                .token(refreshToken)
+                .expiredAt(Instant.now().plusMillis(jwtService.getRefreshTokenExpiration()))
+                .user(user)
+                .build();
+
+        repoRefresh.save(newRefresh);
 
         log.info("Refresh token successfully");
 
