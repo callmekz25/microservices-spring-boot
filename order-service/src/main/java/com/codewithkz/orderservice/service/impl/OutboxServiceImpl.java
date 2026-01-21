@@ -27,8 +27,8 @@ public class OutboxServiceImpl implements OutboxService {
         try {
             repo.save(
                     OutboxEvent.builder()
-                            .event(event)
-                            .destination(destination)
+                            .payload(event)
+                            .topic(destination)
                             .payload(objectMapper.writeValueAsString(payload))
                             .createdAt(Instant.now())
                             .status(OutboxStatus.PENDING)

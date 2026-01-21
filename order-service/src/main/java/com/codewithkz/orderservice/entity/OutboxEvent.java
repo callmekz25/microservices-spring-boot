@@ -18,8 +18,8 @@ public class OutboxEvent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String event;
-    private String destination;
+    private String topic;
+    private String eventId;
     @Lob
     private String payload;
     @Enumerated(EnumType.STRING)

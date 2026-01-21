@@ -1,57 +1,31 @@
 server:
-  port: 8080
+  port: 8089
+
 
 jwt:
   secret: cDQgcWIx2cd6Dnj1Za0FmPNFOB5dmW1A
   internalSecret: 9GSHO1glgDuEOAQrMps44LitSeaVNmMI40bl7Sxra30zZ2nXylPrzsbfgTVftLXE
 
+
 spring:
   application:
     name: api-gateway
-#  cloud:
-#    gateway:
-#      routes:
-#
-#
-#        - id: product-service
-#          uri: lb://product-service
-#          predicates:
-#            - Path=/api/products/**
-#          filters:
-#            - JwtFilter
-#
-#        - id: user-service
-#          uri: lb://user-service
-#          predicates:
-#            - Path=/api/users/**
-#          filters:
-#            - JwtFilter
-#
-#        - id: auth-service
-#          uri: lb://auth-service
-#          predicates:
-#            - Path=/api/auth/**
-#
-#        - id: inventory-service
-#          uri: lb://inventory-service
-#          predicates:
-#            - Path=/api/inventories/**
-#          filters:
-#            - JwtFilter
-#
-#        - id: order-service
-#          uri: lb://order-service
-#          predicates:
-#            - Path=/api/orders/**
-#          filters:
-#            - JwtFilter
-#
-#        - id: payment-service
-#          uri: lb://payment-service
-#          predicates:
-#            - Path=/api/payments/**
-#          filters:
-#            - JwtFilter
+
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: ${KC_CLIENT_ID}
+            client-secret: ${KC_SECRET}
+            authorization-grant-type: authorization_code
+            scope: openid, profile, roles, email
+        provider:
+          keycloak:
+            issuer-uri: ${KC_ISSUE_URL}
+      resourceserver:
+        jwt:
+          issuer-uri: ${KC_ISSUE_URL}
 
 eureka:
   client:

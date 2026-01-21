@@ -13,7 +13,6 @@ import com.codewithkz.commoncore.exception.BadRequestException;
 import com.codewithkz.commoncore.exception.DuplicateException;
 import com.codewithkz.commoncore.exception.NotFoundException;
 import com.codewithkz.commoncore.exception.UnauthorizedException;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -51,8 +50,13 @@ public class AuthServiceImpl implements AuthService {
         var existed = repo.findByEmail(dto.getEmail());
 
         if (existed.isPresent()) {
-            throw new DuplicateException("Email already exists");
+            throw new BadRequestException("Email already exists");
         }
+
+        String keycloakId = null;
+
+
+
 
         User user = mapper.toEntity(dto);
         user.setRole(Roles.ADMIN);
@@ -66,12 +70,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public TokenResponseDto login(LoginDto dto) {
+    public AccessTokenDto login(AccountCredential dto) {
 
         Authentication authentication =
                 authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
-                                dto.getEmail(),
+                                dto.getUsername(),
                                 dto.getPassword()
                         )
                 );
@@ -97,7 +101,7 @@ public class AuthServiceImpl implements AuthService {
         repoRefresh.save(refreshEntity);
 
 
-        return TokenResponseDto
+        return AccessTokenDto
                 .builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -106,9 +110,11 @@ public class AuthServiceImpl implements AuthService {
     }
 
 
+
+
     @Override
     @Transactional
-    public TokenResponseDto refreshToken(RefreshTokenDto dto) {
+    public AccessTokenDto refreshToken(RefreshTokenDto dto) {
 
         Instant now = Instant.now();
 
@@ -145,7 +151,7 @@ public class AuthServiceImpl implements AuthService {
 
         log.info("Refresh token successfully");
 
-        return TokenResponseDto
+        return AccessTokenDto
                 .builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)

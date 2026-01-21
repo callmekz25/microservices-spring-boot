@@ -1,10 +1,10 @@
-package com.codewithkz.paymentservice.publisher;
+package com.codewithkz.productservice.producer;
 
-import com.codewithkz.paymentservice.config.RabbitMQConfig;
-import com.codewithkz.paymentservice.entity.OutboxEvent;
-import com.codewithkz.paymentservice.entity.OutboxStatus;
-import com.codewithkz.paymentservice.repository.OutboxRepository;
-import com.codewithkz.paymentservice.utils.EventRegistry;
+import com.codewithkz.productservice.entity.OutboxEvent;
+import com.codewithkz.productservice.entity.OutboxStatus;
+import com.codewithkz.productservice.config.RabbitMQConfig;
+import com.codewithkz.productservice.repository.OutboxRepository;
+import com.codewithkz.productservice.utils.EventRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
 
-@Service
+//@Service
 @Slf4j
 @RequiredArgsConstructor
 public class OutboxSchedule {
@@ -35,18 +35,19 @@ public class OutboxSchedule {
 //
 //        for (OutboxEvent e : events) {
 //            try {
+//
 //                var eventClass = eventRegistry.get(e.getEvent());
 //
 //                var payload = objectMapper.readValue(e.getPayload(), eventClass);
 //
 //                rabbitTemplate.convertAndSend(
-//                        RabbitMQConfig.PAYMENT_EXCHANGE,
+//                        RabbitMQConfig.PRODUCT_EXCHANGE,
 //                        e.getDestination(),
 //                        payload
 //                );
 //
 //                e.setStatus(OutboxStatus.COMPLETED);
-//                log.info("Published event: " + e.getEvent());
+//                log.info("Published event: " + e.getDestination());
 //            } catch (Exception ex) {
 //                e.setRetryCount(e.getRetryCount() + 1);
 //
@@ -57,7 +58,7 @@ public class OutboxSchedule {
 //                    e.setTimeRetry(Instant.now().plusSeconds(5 * e.getRetryCount()));
 //                }
 //
-//                log.error("Published event failed: " + e.getEvent());
+//                log.error("Published event failed: " + e.getDestination());
 //            }
 //        }
 //    }

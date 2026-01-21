@@ -4,8 +4,8 @@ import com.codewithkz.authservice.dto.*;
 
 public interface AuthService {
     UserDto getMe();
-    TokenResponseDto login(LoginDto loginDto);
+    AccessTokenDto login(AccountCredential dto);
     UserDto register(CreateDto userDto);
-    TokenResponseDto refreshToken(RefreshTokenDto refreshTokenDto);
+    AccessTokenDto refreshToken(RefreshTokenDto refreshTokenDto);
 
 }

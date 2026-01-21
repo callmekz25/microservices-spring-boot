@@ -1,14 +1,15 @@
-package com.codewithkz.paymentservice.publisher;
+package com.codewithkz.orderservice.producer;
 
-import com.codewithkz.paymentservice.config.RabbitMQConfig;
-import com.codewithkz.paymentservice.entity.OutboxEvent;
-import com.codewithkz.paymentservice.entity.OutboxStatus;
-import com.codewithkz.paymentservice.repository.OutboxRepository;
-import com.codewithkz.paymentservice.utils.EventRegistry;
+import com.codewithkz.orderservice.entity.OutboxEvent;
+import com.codewithkz.orderservice.entity.OutboxStatus;
+import com.codewithkz.orderservice.config.RabbitMQConfig;
+import com.codewithkz.orderservice.repository.OutboxRepository;
+import com.codewithkz.orderservice.utils.EventRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +20,9 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class OutboxSchedule {
+public class OutboxProducer {
 
-    private final RabbitTemplate rabbitTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
     private final OutboxRepository repo;
     private final ObjectMapper objectMapper;
     private final EventRegistry eventRegistry;
@@ -35,18 +36,18 @@ public class OutboxSchedule {
 //
 //        for (OutboxEvent e : events) {
 //            try {
-//                var eventClass = eventRegistry.get(e.getEvent());
+////                var eventClass = eventRegistry.get(e.getEvent());
+////
+////                var payload = objectMapper.readValue(e.getPayload(), eventClass);
 //
-//                var payload = objectMapper.readValue(e.getPayload(), eventClass);
-//
-//                rabbitTemplate.convertAndSend(
-//                        RabbitMQConfig.PAYMENT_EXCHANGE,
-//                        e.getDestination(),
-//                        payload
+//                kafkaTemplate.send(
+//                        e.getTopic(),
+//                        e.getEventId(),
+//                        e.getPayload()
 //                );
 //
 //                e.setStatus(OutboxStatus.COMPLETED);
-//                log.info("Published event: " + e.getEvent());
+//                log.info("Published event: " + e.getTopic());
 //            } catch (Exception ex) {
 //                e.setRetryCount(e.getRetryCount() + 1);
 //
@@ -57,7 +58,7 @@ public class OutboxSchedule {
 //                    e.setTimeRetry(Instant.now().plusSeconds(5 * e.getRetryCount()));
 //                }
 //
-//                log.error("Published event failed: " + e.getEvent());
+//                log.error("Published event failed: " + e.getTopic());
 //            }
 //        }
 //    }

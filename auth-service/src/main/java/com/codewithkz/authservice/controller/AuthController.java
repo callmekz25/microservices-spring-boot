@@ -33,14 +33,14 @@ public class AuthController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<ApiResponse<TokenResponseDto>> login(@RequestBody LoginDto dto) {
-        var result = service.login(dto);
+    public ResponseEntity<ApiResponse<AccessTokenDto>> login(@RequestBody AccountCredential creds) {
+        var result = service.login(creds);
 
         return ResponseEntity.ok(ApiResponse.success(result));
     }
 
     @PostMapping("refreshToken")
-    public ResponseEntity<ApiResponse<TokenResponseDto>> refreshToken(HttpServletRequest request, @RequestBody RefreshTokenRequestDto dto) {
+    public ResponseEntity<ApiResponse<AccessTokenDto>> refreshToken(HttpServletRequest request, @RequestBody RefreshTokenRequestDto dto) {
         var authHeader = request.getHeader("authorization");
         var accessToken = authHeader.substring(7);
 

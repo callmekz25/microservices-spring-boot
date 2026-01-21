@@ -26,41 +26,41 @@ public class OutboxSchedule {
     private final ObjectMapper objectMapper;
     private final EventRegistry eventRegistry;
 
-    @Scheduled(fixedDelay = 1000)
-    @Transactional
-    public void publish() {
-
-        List<OutboxEvent> events =
-                repo.findReadyToPublish(Instant.now());
-
-        for (OutboxEvent e : events) {
-            try {
-
-                var eventClass = eventRegistry.get(e.getEvent());
-
-                var payload = objectMapper.readValue(e.getPayload(), eventClass);
-
-                rabbitTemplate.convertAndSend(
-                        RabbitMQConfig.INVENTORY_EXCHANGE,
-                        e.getDestination(),
-                        payload
-                );
-
-                e.setStatus(OutboxStatus.COMPLETED);
-                log.info("Published event: " + e.getEvent());
-            } catch (Exception ex) {
-                e.setRetryCount(e.getRetryCount() + 1);
-
-                if(e.getRetryCount() >= 3) {
-                    e.setStatus(OutboxStatus.DEAD);
-                } else {
-                    e.setStatus(OutboxStatus.FAILED);
-                    e.setTimeRetry(Instant.now().plusSeconds(5 * e.getRetryCount()));
-                }
-
-                log.error("Published event failed: " + e.getEvent());
-            }
-        }
-    }
+//    @Scheduled(fixedDelay = 1000)
+//    @Transactional
+//    public void publish() {
+//
+//        List<OutboxEvent> events =
+//                repo.findReadyToPublish(Instant.now());
+//
+//        for (OutboxEvent e : events) {
+//            try {
+//
+//                var eventClass = eventRegistry.get(e.getEvent());
+//
+//                var payload = objectMapper.readValue(e.getPayload(), eventClass);
+//
+//                rabbitTemplate.convertAndSend(
+//                        RabbitMQConfig.INVENTORY_EXCHANGE,
+//                        e.getDestination(),
+//                        payload
+//                );
+//
+//                e.setStatus(OutboxStatus.COMPLETED);
+//                log.info("Published event: " + e.getEvent());
+//            } catch (Exception ex) {
+//                e.setRetryCount(e.getRetryCount() + 1);
+//
+//                if(e.getRetryCount() >= 3) {
+//                    e.setStatus(OutboxStatus.DEAD);
+//                } else {
+//                    e.setStatus(OutboxStatus.FAILED);
+//                    e.setTimeRetry(Instant.now().plusSeconds(5 * e.getRetryCount()));
+//                }
+//
+//                log.error("Published event failed: " + e.getEvent());
+//            }
+//        }
+//    }
 
 }

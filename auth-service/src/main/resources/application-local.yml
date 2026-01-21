@@ -1,0 +1,4 @@
+KC_CLIENT_ID: demo-microservices
+KC_ISSUE_URL: http://localhost:8080/realms/demo-microservices
+KC_SECRET: GI5owoexfHr2cSHAiwrqgS930PkXOFuH
+KAFKA_HOST: localhost:9092
