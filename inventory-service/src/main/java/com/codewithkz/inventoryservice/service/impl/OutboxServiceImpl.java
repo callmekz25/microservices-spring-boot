@@ -19,28 +19,23 @@ import java.time.Instant;
 @RequiredArgsConstructor
 @Slf4j
 public class OutboxServiceImpl implements OutboxService {
-    private final OutboxRepository repo;
     private final ObjectMapper objectMapper;
+    private final OutboxRepository repo;
 
-
-    @Override
-    @Transactional
-    public void save(String event, String destination, Object payload) {
+    public void save(String topic, Object payload) {
         try {
-            repo.save(
-                    OutboxEvent.builder()
-                            .event(event)
-                            .destination(destination)
-                            .payload(objectMapper.writeValueAsString(payload))
-                            .createdAt(Instant.now())
-                            .status(OutboxStatus.PENDING)
-                            .build()
-            );
-            log.info("Saved OutboxEvent: {}", event);
-        } catch (JsonProcessingException e) {
-            log.error(e.getMessage());
-            throw new BadRequestException(e.getMessage());
-        }
+            String json = objectMapper.writeValueAsString(payload);
 
+            OutboxEvent event = OutboxEvent.builder()
+                    .topic(topic)
+                    .payload(json)
+                    .status(OutboxStatus.PENDING)
+                    .createdAt(Instant.now())
+                    .build();
+
+            repo.save(event);
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot serialize outbox payload", e);
+        }
     }
 }

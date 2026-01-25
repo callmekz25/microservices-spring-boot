@@ -2,3 +2,7 @@ KC_CLIENT_ID: demo-microservices
 KC_ISSUE_URL: http://localhost:8080/realms/microservices-realm
 KC_SECRET: GI5owoexfHr2cSHAiwrqgS930PkXOFuH
 KAFKA_HOST: localhost:9092
+POSTGRES_HOST: localhost:5436
+PAYMENT_DB: payment_db
+POSTGRES_USER: postgres
+POSTGRES_PASSWORD: postgres

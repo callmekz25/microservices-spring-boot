@@ -1,9 +1,8 @@
-package com.codewithkz.paymentservice.publisher;
+package com.codewithkz.inventoryservice.producer;
 
-
-import com.codewithkz.paymentservice.entity.OutboxEvent;
-import com.codewithkz.paymentservice.entity.OutboxStatus;
-import com.codewithkz.paymentservice.repository.OutboxRepository;
+import com.codewithkz.inventoryservice.entity.OutboxEvent;
+import com.codewithkz.inventoryservice.entity.OutboxStatus;
+import com.codewithkz.inventoryservice.repository.OutboxRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;

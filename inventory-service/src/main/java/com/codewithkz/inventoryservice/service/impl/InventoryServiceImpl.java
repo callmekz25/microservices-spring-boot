@@ -4,13 +4,13 @@ package com.codewithkz.inventoryservice.service.impl;
 import com.codewithkz.commoncore.exception.NotFoundException;
 import com.codewithkz.inventoryservice.dto.InventoryDto;
 import com.codewithkz.inventoryservice.entity.Inventory;
-import com.codewithkz.inventoryservice.config.RabbitMQConfig;
 import com.codewithkz.inventoryservice.event.*;
 import com.codewithkz.inventoryservice.mapper.InventoryMapper;
 import com.codewithkz.inventoryservice.repository.InventoryRepository;
 import com.codewithkz.inventoryservice.service.InventoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +25,12 @@ public class InventoryServiceImpl implements InventoryService {
     private final InventoryRepository repo;
     private final InventoryMapper mapper;
     private final OutboxServiceImpl outboxService;
+    @Value("${app.kafka.topics.inventory-reserved}")
+    private String inventoryReservedTopic;
+    @Value("${app.kafka.topics.inventory-released}")
+    private String inventoryReleasedTopic;
+    @Value("${app.kafka.topics.inventory-rejected}")
+    private String inventoryRejectTopic;
 
 
     @Override
@@ -58,7 +64,7 @@ public class InventoryServiceImpl implements InventoryService {
 
         boolean reserved = repo.decreaseQuantity(event.getProductId(), event.getQuantity()) == 1;
         if(reserved) {
-            InventoryReservedEvent eventReserved =  InventoryReservedEvent
+            InventoryReservedEvent payload =  InventoryReservedEvent
                     .builder()
                     .orderId(event.getOrderId())
                     .productId(event.getProductId())
@@ -66,14 +72,14 @@ public class InventoryServiceImpl implements InventoryService {
                     .amount(event.getTotal())
                     .build();
 
-            outboxService.save(RabbitMQConfig.INVENTORY_RESERVED_ROUTING_KEY, RabbitMQConfig.INVENTORY_RESERVED_ROUTING_KEY, eventReserved);
+            outboxService.save(inventoryReservedTopic, payload);
 
 
         } else {
-            InventoryRejectedEvent eventRejected =  InventoryRejectedEvent
+            InventoryRejectedEvent payload =  InventoryRejectedEvent
                     .builder().orderId(event.getOrderId()).build();
 
-            outboxService.save(RabbitMQConfig.INVENTORY_REJECTED_ROUTING_KEY, RabbitMQConfig.INVENTORY_REJECTED_ROUTING_KEY, eventRejected);
+            outboxService.save(inventoryRejectTopic, payload);
 
         }
     }
@@ -85,12 +91,12 @@ public class InventoryServiceImpl implements InventoryService {
         boolean released = repo.increaseQuantity(event.getProductId(), event.getQuantity()) == 1;
 
         if(released) {
-            InventoryReleasedEvent eventReleased =
+            InventoryReleasedEvent payload =
                     InventoryReleasedEvent
                             .builder()
                             .orderId(event.getOrderId()).build();
 
-            outboxService.save(RabbitMQConfig.INVENTORY_RELEASED_ROUTING_KEY, RabbitMQConfig.INVENTORY_RELEASED_ROUTING_KEY, eventReleased);
+            outboxService.save(inventoryReleasedTopic, payload);
 
 
         } else {

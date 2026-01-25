@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 
@@ -19,8 +21,8 @@ public class OutboxEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String topic;
-    private String eventId;
-    @Lob
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
     private String payload;
     @Enumerated(EnumType.STRING)
     private OutboxStatus status = OutboxStatus.PENDING;

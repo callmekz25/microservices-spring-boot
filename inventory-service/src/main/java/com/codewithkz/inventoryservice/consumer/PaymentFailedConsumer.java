@@ -1,11 +1,11 @@
 package com.codewithkz.inventoryservice.consumer;
 
-import com.codewithkz.inventoryservice.config.RabbitMQConfig;
 import com.codewithkz.inventoryservice.event.PaymentFailedEvent;
 import com.codewithkz.inventoryservice.service.impl.InventoryServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,11 +13,19 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PaymentFailedConsumer {
     private final InventoryServiceImpl service;
+    private final ObjectMapper mapper;
 
-    @RabbitListener(queues = RabbitMQConfig.PAYMENT_FAILED_QUEUE)
-    public void handlePaymentFailed(PaymentFailedEvent event) {
-        log.info("Received payment failed event: {}", event.getOrderId());
+    @KafkaListener(topics = "${app.kafka.topics.payment-failed}")
+    public void handlePaymentFailed(String event) throws Exception
+    {
+        try {
+            log.info("Received payment failed event: {}", event);
+            PaymentFailedEvent payload = mapper.readValue(event, PaymentFailedEvent.class);
+            service.handlePaymentFailed(payload);
 
-        service.handlePaymentFailed(event);
+        } catch (Exception e) {
+            log.error("Failed to process message: {}", event, e);
+            throw e;
+        }
     }
 }

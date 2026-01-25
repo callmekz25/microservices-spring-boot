@@ -6,7 +6,6 @@ import com.codewithkz.productservice.dto.CreateDto;
 import com.codewithkz.productservice.dto.ProductDto;
 import com.codewithkz.productservice.entity.Product;
 import com.codewithkz.productservice.service.impl.OutboxServiceImpl;
-import com.codewithkz.productservice.config.RabbitMQConfig;
 import com.codewithkz.productservice.mapper.ProductMapper;
 import com.codewithkz.productservice.repository.ProductRepository;
 import com.codewithkz.productservice.service.impl.ProductServiceImpl;
@@ -116,8 +115,7 @@ public class ProductServiceTest {
         Mockito.verify(productMapper).toDto(Mockito.any(Product.class));
 
         Mockito.verify(outboxService).save(
-                Mockito.eq(RabbitMQConfig.PRODUCT_CREATED_ROUTING_KEY),
-                Mockito.eq(RabbitMQConfig.PRODUCT_CREATED_ROUTING_KEY),
+                Mockito.any(),
                 Mockito.any()
         );
 
@@ -143,7 +141,7 @@ public class ProductServiceTest {
 
 
         Mockito.verify(outboxService, Mockito.never()).save(
-                Mockito.any(), Mockito.any(), Mockito.any()
+                Mockito.any(), Mockito.any()
         );
     }
 

@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -34,39 +35,59 @@ public class GatewaySecurityFilter extends OncePerRequestFilter {
 
 
 
+//    @Override
+//    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+//
+//        String token = request.getHeader(SecurityHeader.X_TOKEN);
+//
+//
+//
+//        if(token != null) {
+//            try {
+//                Claims claims = Jwts.parserBuilder()
+//                        .setSigningKey(internalSecret.getBytes())
+//                        .build()
+//                        .parseClaimsJws(token)
+//                        .getBody();
+//
+//                String userId = claims.getSubject();
+//                String role = claims.get("role", String.class);
+//
+//
+//                Authentication auth = new UsernamePasswordAuthenticationToken(
+//                        userId,
+//                        null,
+//                        List.of(new SimpleGrantedAuthority(ROLE_PREFIX + role))
+//                );
+//                SecurityContextHolder.getContext().setAuthentication(auth);
+//            } catch (JwtException e) {
+//                SecurityContextHolder.clearContext();
+//                formatResponse(response, HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+//            }
+//        }
+//        filterChain.doFilter(request, response);
+//
+//
+//
+//    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String token = request.getHeader(SecurityHeader.X_TOKEN);
+        String sub = request.getHeader(SecurityHeader.X_User_ID);
+        String role = request.getHeader(SecurityHeader.X_ROLES);
 
 
 
-        if(token != null) {
-            try {
-                Claims claims = Jwts.parserBuilder()
-                        .setSigningKey(internalSecret.getBytes())
-                        .build()
-                        .parseClaimsJws(token)
-                        .getBody();
-
-                String userId = claims.getSubject();
-                String role = claims.get("role", String.class);
-
-
-                Authentication auth = new UsernamePasswordAuthenticationToken(
-                        userId,
-                        null,
-                        List.of(new SimpleGrantedAuthority(ROLE_PREFIX + role))
-                );
-                SecurityContextHolder.getContext().setAuthentication(auth);
-            } catch (JwtException e) {
-                SecurityContextHolder.clearContext();
-                formatResponse(response, HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
-            }
+        if(sub != null && role != null) {
+            Authentication auth = new UsernamePasswordAuthenticationToken(
+                    sub,
+                    null,
+                    List.of(new SimpleGrantedAuthority(role))
+            );
+            SecurityContextHolder.getContext().setAuthentication(auth);
         }
         filterChain.doFilter(request, response);
-
-
 
     }
 

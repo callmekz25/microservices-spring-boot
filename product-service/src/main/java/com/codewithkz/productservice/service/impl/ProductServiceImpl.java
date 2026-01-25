@@ -7,12 +7,12 @@ import com.codewithkz.productservice.dto.InventoryDto;
 import com.codewithkz.productservice.dto.ProductDto;
 import com.codewithkz.productservice.dto.ProductInventoryDto;
 import com.codewithkz.productservice.entity.Product;
-import com.codewithkz.productservice.config.RabbitMQConfig;
 import com.codewithkz.productservice.event.ProductCreatedEvent;
 import com.codewithkz.productservice.mapper.ProductMapper;
 import com.codewithkz.productservice.repository.ProductRepository;
 import com.codewithkz.productservice.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +27,8 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper mapper;
     private final OutboxServiceImpl outboxService;
     private final InventoryServiceProxy inventoryClient;
+    @Value("${app.kafka.topics.product-created}")
+    private String productCreatedTopic;
 
 
 
@@ -39,22 +41,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public ProductDto create(CreateDto dto) {
         Product entity = mapper.toEntity(dto);
 
         repo.save(entity);
 
-        var event = ProductCreatedEvent
+        var payload = ProductCreatedEvent
                 .builder()
                 .productId(entity.getId())
                 .quantity(dto.getQuantity())
                 .build();
 
-        outboxService.save(RabbitMQConfig.PRODUCT_CREATED_ROUTING_KEY,
-                RabbitMQConfig.PRODUCT_CREATED_ROUTING_KEY,
-                event);
+        outboxService.save(productCreatedTopic, payload);
 
 
         return mapper.toDto(entity);

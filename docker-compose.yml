@@ -12,6 +12,61 @@ services:
     ports:
       - "8080:8080"
 
+
+  postgres-product:
+    image: postgres:16
+    container_name: postgres-product
+    restart: always
+    environment:
+      POSTGRES_DB: product_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - product_data:/var/lib/postgresql/data
+
+
+
+  postgres-order:
+    image: postgres:16
+    container_name: postgres-order
+    restart: always
+    environment:
+      POSTGRES_DB: order_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - order_data:/var/lib/postgresql/data
+
+  postgres-inventory:
+    image: postgres:16
+    container_name: postgres-inventory
+    restart: always
+    environment:
+      POSTGRES_DB: inventory_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5435:5432"
+    volumes:
+      - inventory_data:/var/lib/postgresql/data
+
+  postgres-payment:
+    image: postgres:16
+    container_name: postgres-payment
+    restart: always
+    environment:
+      POSTGRES_DB: payment_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5436:5432"
+    volumes:
+      - payment_data:/var/lib/postgresql/data
+
   kafka:
     image: apache/kafka:latest
     container_name: kafka_microservices
@@ -41,3 +96,7 @@ services:
 
 volumes:
   kafka_data:
+  product_data:
+  order_data:
+  inventory_data:
+  payment_data:

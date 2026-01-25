@@ -4,42 +4,56 @@ server:
 jwt:
   internalSecret: 9GSHO1glgDuEOAQrMps44LitSeaVNmMI40bl7Sxra30zZ2nXylPrzsbfgTVftLXE
 
+app:
+  kafka:
+    topics:
+      product-created: ${KAFKA_PRODUCT_CREATED_TOPIC}
+
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: ${KC_CLIENT_ID}
+            client-secret: ${KC_SECRET}
+            authorization-grant-type: authorization_code
+            scope: openid, profile, roles, email
+        provider:
+          keycloak:
+            issuer-uri: ${KC_ISSUE_URL}
+      resourceserver:
+        jwt:
+          issuer-uri: ${KC_ISSUE_URL}
   datasource:
-    url: jdbc:h2:mem:productdb
-    driverClassName: org.h2.Driver
-    username: sa
-    password:
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${PRODUCT_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate.jdbc.time_zone: UTC
     hibernate:
       ddl-auto: update
-    show-sql: true
-
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+#    show-sql: true
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${KAFKA_HOST}
 
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
     consumer:
       group-id: product-service
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "*"
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+logging:
+  level:
+    org.springframework.security: DEBUG
 
 
 eureka:

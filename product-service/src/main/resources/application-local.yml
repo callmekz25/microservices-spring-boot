@@ -1,0 +1,10 @@
+KC_CLIENT_ID: demo-microservices
+KC_ISSUE_URL: http://localhost:8080/realms/microservices-realm
+KC_SECRET: GI5owoexfHr2cSHAiwrqgS930PkXOFuH
+KAFKA_HOST: localhost:9092
+POSTGRES_HOST: localhost
+POSTGRES_PORT: 5433
+PRODUCT_DB: product_db
+POSTGRES_USER: postgres
+POSTGRES_PASSWORD: postgres
+KAFKA_PRODUCT_CREATED_TOPIC: product.created
