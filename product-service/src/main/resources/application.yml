@@ -6,8 +6,8 @@ jwt:
 
 app:
   kafka:
-    topics:
-      product-created: ${KAFKA_PRODUCT_CREATED_TOPIC}
+    topic:
+      create-inventory-command: ${KAFKA_CREATE_INVENTORY_COMMAND_TOPIC}
 
 spring:
   security:

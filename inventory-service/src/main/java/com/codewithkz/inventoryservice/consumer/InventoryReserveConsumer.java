@@ -1,6 +1,6 @@
 package com.codewithkz.inventoryservice.consumer;
 
-import com.codewithkz.inventoryservice.event.PaymentFailedEvent;
+import com.codewithkz.inventoryservice.event.OrderCreatedEvent;
 import com.codewithkz.inventoryservice.service.impl.InventoryServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -11,21 +11,22 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class PaymentFailedConsumer {
+public class InventoryReserveConsumer {
     private final InventoryServiceImpl service;
     private final ObjectMapper mapper;
 
-    @KafkaListener(topics = "${app.kafka.topics.payment-failed}")
-    public void handlePaymentFailed(String event) throws Exception
-    {
+    @KafkaListener(topics = "${app.kafka.topic.reserve-inventory-command}")
+    public void handle(String event) throws Exception {
         try {
-            log.info("Received payment failed event: {}", event);
-            PaymentFailedEvent payload = mapper.readValue(event, PaymentFailedEvent.class);
-            service.handlePaymentFailed(payload);
+            log.info("Received order created event: {}", event);
+            OrderCreatedEvent payload =
+                    mapper.readValue(event, OrderCreatedEvent.class);
+            service.handleInventoryReserve(payload);
 
-        } catch (Exception e) {
+        }catch (Exception e) {
             log.error("Failed to process message: {}", event, e);
             throw e;
         }
+
     }
 }

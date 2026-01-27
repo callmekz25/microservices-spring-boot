@@ -23,18 +23,17 @@ public class OutboxServiceImpl implements OutboxService {
 
     @Override
     @Transactional
-    public void save(String event, String destination, Object payload) {
+    public void save(String topic, Object payload) {
         try {
             repo.save(
                     OutboxEvent.builder()
-                            .event(event)
-                            .destination(destination)
+                            .topic(topic)
                             .payload(objectMapper.writeValueAsString(payload))
                             .createdAt(Instant.now())
                             .status(OutboxStatus.PENDING)
                             .build()
             );
-            log.info("Saved OutboxEvent: {}", event);
+            log.info("Saved OutboxEvent: {}", payload);
         } catch (JsonProcessingException e) {
             log.error(e.getMessage());
             throw new BadRequestException(e.getMessage());

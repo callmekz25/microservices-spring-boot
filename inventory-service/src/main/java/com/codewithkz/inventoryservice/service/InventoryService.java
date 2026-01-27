@@ -10,6 +10,6 @@ public interface InventoryService {
     List<InventoryDto> findAll();
     void create(Long productId, int quantity);
     InventoryDto findByProductId(Long id);
-    void handleOrderCreated(OrderCreatedEvent event);
+    void handleInventoryReserve(OrderCreatedEvent event);
     void handlePaymentFailed(PaymentFailedEvent event);
 }

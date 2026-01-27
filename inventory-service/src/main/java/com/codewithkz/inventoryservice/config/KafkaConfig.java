@@ -10,11 +10,11 @@ import org.springframework.kafka.config.TopicBuilder;
 @Configuration
 @RequiredArgsConstructor
 public class KafkaConfig {
-    @Value("${app.kafka.topics.inventory-released}")
+    @Value("${app.kafka.topic.inventory-released}")
     private String inventoryReleasedTopic;
-    @Value("${app.kafka.topics.inventory-reserved}")
+    @Value("${app.kafka.topic.inventory-reserved}")
     private String inventoryReservedTopic;
-    @Value("${app.kafka.topics.inventory-rejected}")
+    @Value("${app.kafka.topic.inventory-rejected}")
     private String inventoryRejectedTopic;
 
     @Bean

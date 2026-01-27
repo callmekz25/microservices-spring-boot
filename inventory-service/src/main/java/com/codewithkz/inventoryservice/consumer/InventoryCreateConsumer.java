@@ -1,6 +1,6 @@
 package com.codewithkz.inventoryservice.consumer;
 
-import com.codewithkz.inventoryservice.event.OrderCreatedEvent;
+import com.codewithkz.inventoryservice.event.ProductCreatedEvent;
 import com.codewithkz.inventoryservice.service.impl.InventoryServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -11,22 +11,20 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class OrderCreatedConsumer {
+public class InventoryCreateConsumer {
     private final InventoryServiceImpl service;
     private final ObjectMapper mapper;
 
-    @KafkaListener(topics = "${app.kafka.topics.order-created}")
-    public void handleOrderCreated(String event) throws Exception {
+    @KafkaListener(topics = "${app.kafka.topic.create-inventory-command}")
+    public void handle(String event) throws Exception {
         try {
-            log.info("Received order created event: {}", event);
-            OrderCreatedEvent payload =
-                    mapper.readValue(event, OrderCreatedEvent.class);
-            service.handleOrderCreated(payload);
-
-        }catch (Exception e) {
+            log.info("Received create inventory event: {}", event);
+            ProductCreatedEvent payload =
+                    mapper.readValue(event, ProductCreatedEvent.class);
+            service.create(payload.getProductId(), payload.getQuantity());
+        } catch (Exception e) {
             log.error("Failed to process message: {}", event, e);
             throw e;
         }
-
     }
 }

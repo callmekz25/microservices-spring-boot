@@ -4,6 +4,17 @@ server:
 jwt:
   internalSecret: 9GSHO1glgDuEOAQrMps44LitSeaVNmMI40bl7Sxra30zZ2nXylPrzsbfgTVftLXE
 
+app:
+  kafka:
+    topic:
+      reserve-inventory-command: ${KAFKA_RESERVED_INVENTORY_COMMAND_TOPIC}
+      payment-completed: ${KAFKA_PAYMENT_COMPLETED_TOPIC}
+      payment-failed: ${KAFKA_PAYMENT_FAILED_TOPIC}
+      inventory-reserved: ${KAFKA_INVENTORY_RESERVED_TOPIC}
+      inventory-rejected: ${KAFKA_INVENTORY_REJECTED_TOPIC}
+      inventory-released: ${KAFKA_INVENTORY_RELEASED_TOPIC}
+      create-payment-command: ${KAFKA_CREATE_PAYMENT_COMMAND_TOPIC}
+
 spring:
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST}/${ORDER_DB}
@@ -13,28 +24,21 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-    show-sql: true
+#    show-sql: true
 
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
 
-#  kafka:
-#    bootstrap-servers: localhost:9092
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST}
 
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
     consumer:
       group-id: order-service
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "*"
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
 eureka:
   client:

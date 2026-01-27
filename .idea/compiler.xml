@@ -19,7 +19,7 @@
         <module name="api-gateway" />
         <module name="common-core" />
       </profile>
-      <profile name="Annotation profile for product-service" enabled="true">
+      <profile name="Annotation profile for payment-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -30,10 +30,10 @@
         </processorPath>
         <module name="product-service" />
         <module name="auth-service" />
-        <module name="inventory-service" />
         <module name="payment-service" />
-        <module name="user-service" />
         <module name="order-service" />
+        <module name="inventory-service" />
+        <module name="user-service" />
       </profile>
     </annotationProcessing>
   </component>

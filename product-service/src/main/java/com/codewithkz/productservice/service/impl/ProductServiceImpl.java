@@ -27,8 +27,8 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper mapper;
     private final OutboxServiceImpl outboxService;
     private final InventoryServiceProxy inventoryClient;
-    @Value("${app.kafka.topics.product-created}")
-    private String productCreatedTopic;
+    @Value("${app.kafka.topic.create-inventory-command}")
+    private String createInventoryTopicName;
 
 
 
@@ -54,7 +54,7 @@ public class ProductServiceImpl implements ProductService {
                 .quantity(dto.getQuantity())
                 .build();
 
-        outboxService.save(productCreatedTopic, payload);
+        outboxService.save(createInventoryTopicName, payload);
 
 
         return mapper.toDto(entity);

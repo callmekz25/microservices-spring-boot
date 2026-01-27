@@ -4,6 +4,13 @@ server:
 jwt:
   internalSecret: 9GSHO1glgDuEOAQrMps44LitSeaVNmMI40bl7Sxra30zZ2nXylPrzsbfgTVftLXE
 
+app:
+  kafka:
+    topic:
+      payment-completed: ${KAFKA_PAYMENT_COMPLETED_TOPIC}
+      payment-failed: ${KAFKA_PAYMENT_FAILED_TOPIC}
+      create-payment-command: ${KAFKA_CREATE_PAYMENT_COMMAND_TOPIC}
+
 spring:
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST}/${PAYMENT_DB}
@@ -13,13 +20,20 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-    show-sql: true
+#    show-sql: true
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST}
 
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+    consumer:
+      group-id: payment-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
 
 eureka:
   client:

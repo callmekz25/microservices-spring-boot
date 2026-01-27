@@ -6,13 +6,12 @@ jwt:
 
 app:
   kafka:
-    topics:
-      product-created: ${KAFKA_PRODUCT_CREATED_TOPIC}
+    topic:
+      create-inventory-command: ${KAFKA_CREATE_INVENTORY_COMMAND_TOPIC}
       inventory-reserved: ${KAFKA_INVENTORY_RESERVED_TOPIC}
       inventory-released: ${KAFKA_INVENTORY_RELEASED_TOPIC}
-      order-created: ${KAFKA_ORDER_CREATED_TOPIC}
+      reserve-inventory-command: ${KAFKA_RESERVED_INVENTORY_COMMAND_TOPIC}
       inventory-rejected: ${KAFKA_INVENTORY_REJECTED_TOPIC}
-      payment-failed: ${KAFKA_PAYMENT_FAILED_TOPIC}
 
 
 spring:
@@ -39,7 +38,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-#    show-sql: true
+    # show-sql: true
 
   kafka:
     bootstrap-servers: ${KAFKA_HOST}

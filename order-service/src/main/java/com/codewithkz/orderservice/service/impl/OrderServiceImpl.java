@@ -7,13 +7,15 @@ import com.codewithkz.orderservice.dto.OrderDto;
 import com.codewithkz.orderservice.dto.ProductDto;
 import com.codewithkz.orderservice.entity.Order;
 import com.codewithkz.orderservice.entity.OrderStatus;
+import com.codewithkz.orderservice.event.CreatePaymentEvent;
+import com.codewithkz.orderservice.event.InventoryReservedEvent;
 import com.codewithkz.orderservice.proxy.ProductServiceProxy;
-import com.codewithkz.orderservice.config.RabbitMQConfig;
 import com.codewithkz.orderservice.event.OrderCreatedEvent;
 import com.codewithkz.orderservice.mapper.OrderMapper;
 import com.codewithkz.orderservice.repository.OrderRepository;
 import com.codewithkz.orderservice.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,8 +32,10 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper mapper;
     private final ProductServiceProxy productServiceProxy;
     private final OutboxServiceImpl outboxService;
-
-
+    @Value("${app.kafka.topic.reserve-inventory-command}")
+    private String reserveInventoryTopicName;
+    @Value("${app.kafka.topic.create-payment-command}")
+    private String createPaymentTopicName;
 
     @Override
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
@@ -51,7 +55,7 @@ public class OrderServiceImpl implements OrderService {
             throw new UnauthorizedException("Unauthenticated");
         }
 
-        Long userId = Long.parseLong(authentication.getName());
+        String userId = authentication.getName();
 
         var order = new Order();
 
@@ -68,7 +72,7 @@ public class OrderServiceImpl implements OrderService {
         repo.save(order);
 
 
-        OrderCreatedEvent event = OrderCreatedEvent
+        OrderCreatedEvent payload = OrderCreatedEvent
                 .builder()
                 .orderId(order.getId())
                 .productId(order.getProductId())
@@ -78,8 +82,7 @@ public class OrderServiceImpl implements OrderService {
                 .total(order.getTotal())
                 .build();
 
-        outboxService.save(RabbitMQConfig.ORDER_CREATED_ROUTING_KEY, RabbitMQConfig.ORDER_CREATED_ROUTING_KEY, event);
-
+        outboxService.save(reserveInventoryTopicName, payload);
 
         return mapper.toDto(order);
 
@@ -94,7 +97,18 @@ public class OrderServiceImpl implements OrderService {
         repo.save(order);
     }
 
+    @Override
+    @Transactional
+    public void handleCreatePaymentCommand(InventoryReservedEvent event) {
+        Order order = repo.findById(event.getOrderId()).orElseThrow(() -> new NotFoundException("Not found order"));
 
+        CreatePaymentEvent payload = CreatePaymentEvent
+                .builder()
+                .orderId(order.getId())
+                .amount(order.getTotal())
+                .build();
 
+        outboxService.save(createPaymentTopicName, payload);
+    }
 
 }

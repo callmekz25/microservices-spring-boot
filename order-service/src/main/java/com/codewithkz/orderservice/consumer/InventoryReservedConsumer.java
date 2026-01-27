@@ -1,5 +1,6 @@
 package com.codewithkz.orderservice.consumer;
 
+
 import com.codewithkz.orderservice.entity.OrderStatus;
 import com.codewithkz.orderservice.event.InventoryReservedEvent;
 import com.codewithkz.orderservice.event.PaymentCompletedEvent;
@@ -10,21 +11,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
-@Slf4j
 @Service
+@Slf4j
 @RequiredArgsConstructor
-public class PaymentCompletedConsumer {
+public class InventoryReservedConsumer {
     private final OrderServiceImpl service;
     private final ObjectMapper mapper;
 
-    @KafkaListener(topics = "${app.kafka.topic.payment-completed}")
+    @KafkaListener(topics = "${app.kafka.topic.inventory-reserved}")
     public void handle(String event) throws Exception {
         try {
-            log.info("Received payment completed event: {}", event);
-            PaymentCompletedEvent payload =
-                    mapper.readValue(event, PaymentCompletedEvent.class);
+            log.info("Received inventory reserved event: {}", event);
+            InventoryReservedEvent payload =
+                    mapper.readValue(event, InventoryReservedEvent.class);
 
-            service.updateStatusOrder(payload.getOrderId(), OrderStatus.COMPLETED);
+            service.handleCreatePaymentCommand(payload);
         } catch (Exception e) {
             log.error("Failed to process message: {}", event, e);
             throw e;

@@ -9,11 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrderCreatedEvent {
+public class InventoryReservedEvent {
     private Long orderId;
-    private Double price;
     private Long productId;
-    private Double total;
     private int quantity;
-    private String userId;
 }

@@ -1,4 +1,4 @@
-package com.codewithkz.orderservice.config;
+package com.codewithkz.paymentservice.config;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,24 +8,24 @@ import org.springframework.kafka.config.TopicBuilder;
 
 @Configuration
 public class KafkaConfig {
-    @Value("${app.kafka.topic.reserve-inventory-command}")
-    private String reserveInventoryCommandTopicName;
-    @Value("${app.kafka.topic.create-payment-command}")
-    private String createPaymentCommandTopicName;
+    @Value("${app.kafka.topic.payment-completed}")
+    private String paymentCompletedTopicName;
+    @Value("${app.kafka.topic.payment-failed}")
+    private String paymentFailedTopicName;
 
     @Bean
-    public NewTopic reserveInventoryTopic() {
+    public NewTopic paymentCompletedTopic() {
         return TopicBuilder
-                .name(reserveInventoryCommandTopicName)
+                .name(paymentCompletedTopicName)
                 .partitions(3)
                 .replicas(1)
                 .build();
     }
 
     @Bean
-    public NewTopic createPaymentTopicName() {
+    public NewTopic paymentFailedTopic() {
         return TopicBuilder
-                .name(createPaymentCommandTopicName)
+                .name(paymentFailedTopicName)
                 .partitions(3)
                 .replicas(1)
                 .build();

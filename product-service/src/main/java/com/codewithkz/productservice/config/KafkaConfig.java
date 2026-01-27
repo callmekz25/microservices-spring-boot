@@ -10,13 +10,13 @@ import org.springframework.kafka.config.TopicBuilder;
 @Configuration
 @RequiredArgsConstructor
 public class KafkaConfig {
-    @Value("${app.kafka.topics.product-created}")
-    private String productCreatedTopic;
+    @Value("${app.kafka.topic.create-inventory-command}")
+    private String createInventoryCommandTopic;
 
 
     @Bean
-    public NewTopic productCreatedTopic() {
-        return TopicBuilder.name(productCreatedTopic)
+    public NewTopic createInventoryTopic() {
+        return TopicBuilder.name(createInventoryCommandTopic)
                 .partitions(3)
                 .replicas(1)
                 .build();

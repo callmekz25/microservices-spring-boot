@@ -25,11 +25,11 @@ public class InventoryServiceImpl implements InventoryService {
     private final InventoryRepository repo;
     private final InventoryMapper mapper;
     private final OutboxServiceImpl outboxService;
-    @Value("${app.kafka.topics.inventory-reserved}")
+    @Value("${app.kafka.topic.inventory-reserved}")
     private String inventoryReservedTopic;
-    @Value("${app.kafka.topics.inventory-released}")
+    @Value("${app.kafka.topic.inventory-released}")
     private String inventoryReleasedTopic;
-    @Value("${app.kafka.topics.inventory-rejected}")
+    @Value("${app.kafka.topic.inventory-rejected}")
     private String inventoryRejectTopic;
 
 
@@ -60,7 +60,7 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     @Transactional
-    public void handleOrderCreated(OrderCreatedEvent event) {
+    public void handleInventoryReserve(OrderCreatedEvent event) {
 
         boolean reserved = repo.decreaseQuantity(event.getProductId(), event.getQuantity()) == 1;
         if(reserved) {
