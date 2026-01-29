@@ -1,5 +1,4 @@
-package com.codewithkz.productservice.dto;
-
+package com.codewithkz.commoncore.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,9 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class InventoryDto {
-    private Long id;
-    private Long productId;
-    private int quantity;
+public class InventoryReleasedEvent {
+    private Long orderId;
 }
-

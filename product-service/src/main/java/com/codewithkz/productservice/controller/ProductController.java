@@ -1,15 +1,14 @@
 package com.codewithkz.productservice.controller;
 
+import com.codewithkz.commoncore.controller.BaseController;
 import com.codewithkz.commoncore.response.ApiResponse;
-import com.codewithkz.productservice.dto.CreateDto;
-import com.codewithkz.productservice.dto.ProductDto;
-import com.codewithkz.productservice.dto.ProductInventoryDto;
-import com.codewithkz.productservice.service.impl.ProductServiceImpl;
+import com.codewithkz.productservice.dto.ProductCreateUpdateRequestDTO;
+import com.codewithkz.productservice.dto.ProductCreateUpdateResponseDTO;
+import com.codewithkz.productservice.entity.Product;
+import com.codewithkz.productservice.mapper.ProductMapper;
+import com.codewithkz.productservice.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,41 +16,38 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/products")
 @Slf4j
-public class ProductController {
+public class ProductController extends BaseController<Product, ProductCreateUpdateRequestDTO, ProductCreateUpdateResponseDTO, Long> {
 
-    private final ProductServiceImpl service;
+    private final ProductMapper productMapper;
+    private final ProductService productService;
 
-    public ProductController(ProductServiceImpl service) {
-        this.service = service;
+    public ProductController(ProductService service, ProductMapper productMapper) {
+        super(service, productMapper);
+        this.productMapper = productMapper;
+        this.productService = service;
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ProductDto>>> findAll() {
-        var result = service.finAll();
-
-        return ResponseEntity.ok(ApiResponse.success(result));
+    public ResponseEntity<ApiResponse<List<ProductCreateUpdateResponseDTO>>> getAll() {
+        return super.getAll();
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<ProductDto>> create(@RequestBody CreateDto dto) {
-        var result = service.create(dto);
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        log.info("Sub: {}", auth.getName());
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(result));
+    public ResponseEntity<ApiResponse<ProductCreateUpdateResponseDTO>> create(@RequestBody ProductCreateUpdateRequestDTO dto) {
+        Product created = productService.createProduct(dto);
+        ProductCreateUpdateResponseDTO responseDTO = productMapper.toDTO(created);
+        return ResponseEntity.ok(ApiResponse.success(responseDTO));
     }
 
-    @GetMapping("{id}/detail")
-    public ResponseEntity<ApiResponse<ProductInventoryDto>> getProductDetail(@PathVariable Long id) {
-        var result = service.findByIdWithInventory(id);
-
-        return ResponseEntity.ok(ApiResponse.success(result));
-    }
+//    @GetMapping("{id}/detail")
+//    public ResponseEntity<ApiResponse<ProductInventoryDto>> getProductDetail(@PathVariable Long id) {
+//        var result = service.findByIdWithInventory(id);
+//
+//        return ResponseEntity.ok(ApiResponse.success(result));
+//    }
 
     @GetMapping("{id}")
-    public ResponseEntity<ApiResponse<ProductDto>> getById(@PathVariable Long id) {
-        var result = service.findById(id);
-
-        return ResponseEntity.ok(ApiResponse.success(result));
+    public ResponseEntity<ApiResponse<ProductCreateUpdateResponseDTO>> getById(@PathVariable Long id) {
+        return super.getById(id);
     }
 }

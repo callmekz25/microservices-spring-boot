@@ -28,6 +28,8 @@ public class GatewayConfig {
 
                 .route(p -> p
                         .path("/api/products/**")
+                        .and()
+                        .method("POST", "PUT", "DELETE")
                         .filters(f -> f.filter(gatewayTokenFilter))
                         .uri("lb://product-service"))
 
