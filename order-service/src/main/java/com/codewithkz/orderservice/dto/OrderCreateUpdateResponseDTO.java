@@ -1,27 +1,20 @@
-package com.codewithkz.orderservice.entity;
+package com.codewithkz.orderservice.dto;
 
-import jakarta.persistence.*;
+import com.codewithkz.commoncore.dto.BaseDTO;
+import com.codewithkz.orderservice.model.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "orders")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Order {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class OrderCreateUpdateResponseDTO extends BaseDTO {
     private Long productId;
-    private String userId;
     private int quantity;
     private Double price;
     private Double total;
-
-    @Enumerated(EnumType.STRING)
     private OrderStatus status;
 }

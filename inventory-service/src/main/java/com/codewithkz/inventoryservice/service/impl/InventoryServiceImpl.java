@@ -1,29 +1,29 @@
 package com.codewithkz.inventoryservice.service.impl;
 
 
+import com.codewithkz.commoncore.event.InventoryRejectedEvent;
+import com.codewithkz.commoncore.event.InventoryReservedEvent;
+import com.codewithkz.commoncore.exception.BadRequestException;
 import com.codewithkz.commoncore.exception.NotFoundException;
-import com.codewithkz.inventoryservice.dto.InventoryDto;
-import com.codewithkz.inventoryservice.entity.Inventory;
-import com.codewithkz.inventoryservice.event.*;
-import com.codewithkz.inventoryservice.mapper.InventoryMapper;
+import com.codewithkz.commoncore.repository.BaseRepository;
+import com.codewithkz.commoncore.service.impl.BaseServiceImpl;
+import com.codewithkz.commoncore.event.OrderCreatedEvent;
+import com.codewithkz.commoncore.event.PaymentFailedEvent;
+import com.codewithkz.commoncore.event.InventoryReleasedEvent;
+import com.codewithkz.inventoryservice.dto.InventoryCreateUpdateRequestDTO;
+import com.codewithkz.inventoryservice.model.Inventory;
 import com.codewithkz.inventoryservice.repository.InventoryRepository;
 import com.codewithkz.inventoryservice.service.InventoryService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @Slf4j
-@RequiredArgsConstructor
-public class InventoryServiceImpl implements InventoryService {
+public class InventoryServiceImpl extends BaseServiceImpl<Inventory, String> implements InventoryService {
 
     private final InventoryRepository repo;
-    private final InventoryMapper mapper;
     private final OutboxServiceImpl outboxService;
     @Value("${app.kafka.topic.inventory-reserved}")
     private String inventoryReservedTopic;
@@ -32,34 +32,32 @@ public class InventoryServiceImpl implements InventoryService {
     @Value("${app.kafka.topic.inventory-rejected}")
     private String inventoryRejectTopic;
 
-
-    @Override
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public List<InventoryDto> findAll() {
-        List<Inventory> inventories = repo.findAll();
-
-        return mapper.toDtoList(inventories);
-    }
-
-    @Override
-    public void create(Long productId, int quantity) {
-        Inventory inventory = Inventory.builder().productId(productId).quantity(quantity).build();
-
-        repo.save(inventory);
-    }
-
-    @Override
-    public InventoryDto findByProductId(Long id) {
-        Inventory inventory = repo.findByProductId(id).orElseThrow(() -> new NotFoundException("Inventory not found"));
-
-        return mapper.toDto(inventory);
+    public InventoryServiceImpl(BaseRepository<Inventory, String> repository, InventoryRepository repo,
+                                OutboxServiceImpl outboxService) {
+        super(repository);
+        this.repo = repo;
+        this.outboxService = outboxService;
     }
 
 
-
-
     @Override
+    public Inventory getByProductId(String id) {
+        return repo.getByProductId(id).orElseThrow(() -> new NotFoundException("Inventory not found for product id: " + id));
+    }
+
     @Transactional
+    @Override
+    public Inventory validateStock(InventoryCreateUpdateRequestDTO dto) {
+        Inventory inventory = this.getByProductId(dto.getProductId());
+        boolean success = repo.decreaseQuantity(dto.getProductId(), dto.getQuantity()) == 1;
+        if(!success) {
+            throw new BadRequestException("Not enough stock for product id: " + dto.getProductId());
+        }
+        return inventory;
+    }
+
+    @Transactional
+    @Override
     public void handleInventoryReserve(OrderCreatedEvent event) {
 
         boolean reserved = repo.decreaseQuantity(event.getProductId(), event.getQuantity()) == 1;
@@ -69,23 +67,23 @@ public class InventoryServiceImpl implements InventoryService {
                     .orderId(event.getOrderId())
                     .productId(event.getProductId())
                     .quantity(event.getQuantity())
-                    .amount(event.getTotal())
                     .build();
 
-            outboxService.save(inventoryReservedTopic, payload);
+
+            outboxService.create(inventoryReservedTopic, payload);
 
 
         } else {
             InventoryRejectedEvent payload =  InventoryRejectedEvent
                     .builder().orderId(event.getOrderId()).build();
 
-            outboxService.save(inventoryRejectTopic, payload);
+            outboxService.create(inventoryRejectTopic, payload);
 
         }
     }
 
-    @Override
     @Transactional
+    @Override
     public void handlePaymentFailed(PaymentFailedEvent event) {
 
         boolean released = repo.increaseQuantity(event.getProductId(), event.getQuantity()) == 1;
@@ -96,9 +94,7 @@ public class InventoryServiceImpl implements InventoryService {
                             .builder()
                             .orderId(event.getOrderId()).build();
 
-            outboxService.save(inventoryReleasedTopic, payload);
-
-
+            outboxService.create(inventoryReleasedTopic, payload);
         } else {
             log.error("Failed to release inventory event: {}", event.getOrderId());
         }

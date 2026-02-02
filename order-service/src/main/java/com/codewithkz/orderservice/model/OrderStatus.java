@@ -1,4 +1,4 @@
-package com.codewithkz.orderservice.entity;
+package com.codewithkz.orderservice.model;
 
 public enum OrderStatus {
     PENDING,

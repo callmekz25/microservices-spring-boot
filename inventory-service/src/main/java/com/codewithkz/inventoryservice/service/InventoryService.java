@@ -1,15 +1,14 @@
 package com.codewithkz.inventoryservice.service;
 
-import com.codewithkz.inventoryservice.dto.InventoryDto;
-import com.codewithkz.inventoryservice.event.OrderCreatedEvent;
-import com.codewithkz.inventoryservice.event.PaymentFailedEvent;
+import com.codewithkz.commoncore.service.BaseService;
+import com.codewithkz.inventoryservice.dto.InventoryCreateUpdateRequestDTO;
+import com.codewithkz.inventoryservice.model.Inventory;
+import com.codewithkz.commoncore.event.OrderCreatedEvent;
+import com.codewithkz.commoncore.event.PaymentFailedEvent;
 
-import java.util.List;
-
-public interface InventoryService {
-    List<InventoryDto> findAll();
-    void create(Long productId, int quantity);
-    InventoryDto findByProductId(Long id);
+public interface InventoryService extends BaseService<Inventory, String> {
+    Inventory getByProductId(String id);
+    Inventory validateStock(InventoryCreateUpdateRequestDTO dto);
     void handleInventoryReserve(OrderCreatedEvent event);
     void handlePaymentFailed(PaymentFailedEvent event);
 }

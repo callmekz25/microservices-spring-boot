@@ -1,53 +1,53 @@
 package com.codewithkz.orderservice.service.impl;
 
-import com.codewithkz.commoncore.exception.NotFoundException;
 import com.codewithkz.commoncore.exception.UnauthorizedException;
-import com.codewithkz.orderservice.dto.CreateOrderDto;
-import com.codewithkz.orderservice.dto.OrderDto;
-import com.codewithkz.orderservice.dto.ProductDto;
-import com.codewithkz.orderservice.entity.Order;
-import com.codewithkz.orderservice.entity.OrderStatus;
-import com.codewithkz.orderservice.event.CreatePaymentEvent;
-import com.codewithkz.orderservice.event.InventoryReservedEvent;
-import com.codewithkz.orderservice.proxy.ProductServiceProxy;
-import com.codewithkz.orderservice.event.OrderCreatedEvent;
-import com.codewithkz.orderservice.mapper.OrderMapper;
+import com.codewithkz.commoncore.response.ApiResponse;
+import com.codewithkz.commoncore.service.impl.BaseServiceImpl;
+import com.codewithkz.orderservice.dto.InventoryCreateUpdateResponseDTO;
+import com.codewithkz.orderservice.dto.PaymentCreateUpdateRequestDTO;
+import com.codewithkz.orderservice.dto.ProductCreateUpdateResponseDTO;
+import com.codewithkz.orderservice.model.Order;
+import com.codewithkz.orderservice.model.OrderStatus;
+import com.codewithkz.commoncore.event.CreatePaymentEvent;
+import com.codewithkz.commoncore.event.InventoryReservedEvent;
+import com.codewithkz.orderservice.service.client.InventoryServiceIntegration;
+import com.codewithkz.orderservice.service.client.PaymentServiceIntegration;
+import com.codewithkz.orderservice.service.client.ProductServiceIntegration;
+import com.codewithkz.commoncore.event.OrderCreatedEvent;
 import com.codewithkz.orderservice.repository.OrderRepository;
 import com.codewithkz.orderservice.service.OrderService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
-@RequiredArgsConstructor
-public class OrderServiceImpl implements OrderService {
+public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements OrderService {
 
-    private final OrderRepository repo;
-    private final OrderMapper mapper;
-    private final ProductServiceProxy productServiceProxy;
+    private final ProductServiceIntegration productServiceIntegration;
+    private final InventoryServiceIntegration inventoryServiceIntegration;
+    private final PaymentServiceIntegration paymentServiceIntegration;
+    private final OrderRepository orderRepository;
     private final OutboxServiceImpl outboxService;
     @Value("${app.kafka.topic.reserve-inventory-command}")
     private String reserveInventoryTopicName;
     @Value("${app.kafka.topic.create-payment-command}")
     private String createPaymentTopicName;
 
-    @Override
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public List<OrderDto> findAll() {
-        List<Order> orders = repo.findAll();
-
-        return mapper.toDtoList(orders);
+    public OrderServiceImpl(OrderRepository repository, ProductServiceIntegration productServiceIntegration, OutboxServiceImpl outboxService,
+                            InventoryServiceIntegration inventoryServiceIntegration, PaymentServiceIntegration paymentServiceIntegration) {
+        super(repository);
+        this.orderRepository = repository;
+        this.outboxService = outboxService;
+        this.productServiceIntegration = productServiceIntegration;
+        this.inventoryServiceIntegration = inventoryServiceIntegration;
+        this.paymentServiceIntegration = paymentServiceIntegration;
     }
 
     @Override
     @Transactional
-    public OrderDto create(CreateOrderDto dto) {
+    public Order create(Order dto) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -59,7 +59,8 @@ public class OrderServiceImpl implements OrderService {
 
         var order = new Order();
 
-        ProductDto product = productServiceProxy.getProductById(dto.getProductId()).getData();
+        ProductCreateUpdateResponseDTO product = productServiceIntegration.getById(dto.getProductId()).getData();
+        inventoryServiceIntegration.validateStock(product.getId());
 
         order.setProductId(product.getId());
         order.setQuantity(dto.getQuantity());
@@ -69,38 +70,44 @@ public class OrderServiceImpl implements OrderService {
         order.setTotal(total);
         order.setStatus(OrderStatus.PENDING);
 
-        repo.save(order);
+        Order created = repository.save(order);
+
+        PaymentCreateUpdateRequestDTO request = new PaymentCreateUpdateRequestDTO(created.getTotal(), created.getId());
+        paymentServiceIntegration.create(request);
+
+        created.setStatus(OrderStatus.COMPLETED);
+
+        return created;
 
 
-        OrderCreatedEvent payload = OrderCreatedEvent
-                .builder()
-                .orderId(order.getId())
-                .productId(order.getProductId())
-                .quantity(order.getQuantity())
-                .userId(order.getUserId())
-                .price(order.getPrice())
-                .total(order.getTotal())
-                .build();
 
-        outboxService.save(reserveInventoryTopicName, payload);
+//        OrderCreatedEvent payload = OrderCreatedEvent
+//                .builder()
+//                .orderId(order.getId())
+//                .productId(order.getProductId())
+//                .quantity(order.getQuantity())
+//                .userId(order.getUserId())
+//                .price(order.getPrice())
+//                .total(order.getTotal())
+//                .build();
 
-        return mapper.toDto(order);
+//        outboxService.create(reserveInventoryTopicName, payload);
 
     }
 
     @Override
     @Transactional
-    public void updateStatusOrder(Long orderId, OrderStatus status) {
-        Order order = repo.findById(orderId).orElseThrow(() -> new NotFoundException("Not found order"));
+    public void updateStatusOrder(String orderId, OrderStatus status) {
+        Order order = getById(orderId);
 
         order.setStatus(status);
-        repo.save(order);
+        super.update(orderId, order);
     }
 
     @Override
     @Transactional
     public void handleCreatePaymentCommand(InventoryReservedEvent event) {
-        Order order = repo.findById(event.getOrderId()).orElseThrow(() -> new NotFoundException("Not found order"));
+        Order order = getById(event.getOrderId());
 
         CreatePaymentEvent payload = CreatePaymentEvent
                 .builder()
@@ -108,7 +115,7 @@ public class OrderServiceImpl implements OrderService {
                 .amount(order.getTotal())
                 .build();
 
-        outboxService.save(createPaymentTopicName, payload);
+        outboxService.create(createPaymentTopicName, payload);
     }
 
 }

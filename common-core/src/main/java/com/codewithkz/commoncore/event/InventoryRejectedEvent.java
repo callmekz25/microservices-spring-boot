@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class InventoryRejectedEvent {
-    private Long orderId;
+    private String orderId;
 }

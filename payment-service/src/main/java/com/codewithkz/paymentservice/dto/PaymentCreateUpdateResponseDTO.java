@@ -1,5 +1,6 @@
 package com.codewithkz.paymentservice.dto;
 
+import com.codewithkz.commoncore.dto.BaseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public  class CreatePaymentDto {
-    private Long orderId;
+public class PaymentCreateUpdateResponseDTO extends BaseDTO {
     private Double amount;
+    private boolean paid;
+    private Long orderId;
 }

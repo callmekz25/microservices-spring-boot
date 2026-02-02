@@ -1,6 +1,6 @@
 package com.codewithkz.orderservice.dto;
 
-import com.codewithkz.orderservice.entity.OrderStatus;
+import com.codewithkz.orderservice.model.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

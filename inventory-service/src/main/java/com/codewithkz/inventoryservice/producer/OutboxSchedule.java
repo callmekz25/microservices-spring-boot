@@ -1,7 +1,7 @@
 package com.codewithkz.inventoryservice.producer;
 
-import com.codewithkz.inventoryservice.entity.OutboxEvent;
-import com.codewithkz.inventoryservice.entity.OutboxStatus;
+import com.codewithkz.inventoryservice.model.OutboxEvent;
+import com.codewithkz.commoncore.enums.OutboxStatus;
 import com.codewithkz.inventoryservice.repository.OutboxRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

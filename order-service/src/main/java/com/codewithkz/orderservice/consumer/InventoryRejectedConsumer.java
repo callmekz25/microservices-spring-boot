@@ -1,7 +1,7 @@
 package com.codewithkz.orderservice.consumer;
 
-import com.codewithkz.orderservice.entity.OrderStatus;
-import com.codewithkz.orderservice.event.InventoryRejectedEvent;
+import com.codewithkz.orderservice.model.OrderStatus;
+import com.codewithkz.commoncore.event.InventoryRejectedEvent;
 import com.codewithkz.orderservice.service.impl.OrderServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

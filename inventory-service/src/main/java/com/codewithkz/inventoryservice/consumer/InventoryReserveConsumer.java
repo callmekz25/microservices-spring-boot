@@ -1,6 +1,6 @@
 package com.codewithkz.inventoryservice.consumer;
 
-import com.codewithkz.inventoryservice.event.OrderCreatedEvent;
+import com.codewithkz.commoncore.event.OrderCreatedEvent;
 import com.codewithkz.inventoryservice.service.impl.InventoryServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

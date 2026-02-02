@@ -1,4 +1,4 @@
-package com.codewithkz.paymentservice.entity;
+package com.codewithkz.commoncore.enums;
 
 public enum OutboxStatus {
     PENDING,

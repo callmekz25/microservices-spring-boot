@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class PaymentFailedEvent {
-    private Long orderId;
-    private Long productId;
+    private String orderId;
+    private String productId;
     private int quantity;
     private String reason;
 }

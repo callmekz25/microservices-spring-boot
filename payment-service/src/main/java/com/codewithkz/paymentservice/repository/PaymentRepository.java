@@ -1,12 +1,12 @@
 package com.codewithkz.paymentservice.repository;
 
-import com.codewithkz.paymentservice.entity.Payment;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.codewithkz.commoncore.repository.BaseRepository;
+import com.codewithkz.paymentservice.model.Payment;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface PaymentRepository extends JpaRepository<Payment, Long> {
-    Optional<Payment> findByOrderId(Long orderId);
+public interface PaymentRepository extends BaseRepository<Payment, String> {
+    Optional<Payment> findByOrderId(String orderId);
 }

@@ -1,7 +1,7 @@
 package com.codewithkz.orderservice.producer;
 
-import com.codewithkz.orderservice.entity.OutboxEvent;
-import com.codewithkz.orderservice.entity.OutboxStatus;
+import com.codewithkz.orderservice.model.OutboxEvent;
+import com.codewithkz.commoncore.enums.OutboxStatus;
 import com.codewithkz.orderservice.repository.OutboxRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

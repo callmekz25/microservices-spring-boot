@@ -1,9 +1,7 @@
 package com.codewithkz.orderservice.consumer;
 
 
-import com.codewithkz.orderservice.entity.OrderStatus;
-import com.codewithkz.orderservice.event.InventoryReservedEvent;
-import com.codewithkz.orderservice.event.PaymentCompletedEvent;
+import com.codewithkz.commoncore.event.InventoryReservedEvent;
 import com.codewithkz.orderservice.service.impl.OrderServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

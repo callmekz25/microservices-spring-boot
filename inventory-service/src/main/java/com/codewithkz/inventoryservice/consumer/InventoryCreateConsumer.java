@@ -1,6 +1,7 @@
 package com.codewithkz.inventoryservice.consumer;
 
-import com.codewithkz.inventoryservice.event.ProductCreatedEvent;
+import com.codewithkz.commoncore.event.ProductCreatedEvent;
+import com.codewithkz.inventoryservice.model.Inventory;
 import com.codewithkz.inventoryservice.service.impl.InventoryServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,10 @@ public class InventoryCreateConsumer {
             log.info("Received create inventory event: {}", event);
             ProductCreatedEvent payload =
                     mapper.readValue(event, ProductCreatedEvent.class);
-            service.create(payload.getProductId(), payload.getQuantity());
+            Inventory inventory = new Inventory();
+            inventory.setProductId(payload.getProductId());
+            inventory.setQuantity(payload.getQuantity());
+            service.create(inventory);
         } catch (Exception e) {
             log.error("Failed to process message: {}", event, e);
             throw e;

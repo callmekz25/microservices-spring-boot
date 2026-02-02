@@ -2,11 +2,8 @@ package com.codewithkz.productservice.service;
 
 import com.codewithkz.commoncore.service.BaseService;
 import com.codewithkz.productservice.dto.ProductCreateUpdateRequestDTO;
-import com.codewithkz.productservice.entity.Product;
+import com.codewithkz.productservice.model.Product;
 
-import java.util.List;
-
-public interface ProductService extends BaseService<Product, Long> {
-//    ProductInventoryDto findByIdWithInventory(Long id);
+public interface ProductService extends BaseService<Product, String> {
     Product createProduct(ProductCreateUpdateRequestDTO dto);
 }

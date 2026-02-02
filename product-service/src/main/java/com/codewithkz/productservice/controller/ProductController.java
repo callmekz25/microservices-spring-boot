@@ -4,7 +4,7 @@ import com.codewithkz.commoncore.controller.BaseController;
 import com.codewithkz.commoncore.response.ApiResponse;
 import com.codewithkz.productservice.dto.ProductCreateUpdateRequestDTO;
 import com.codewithkz.productservice.dto.ProductCreateUpdateResponseDTO;
-import com.codewithkz.productservice.entity.Product;
+import com.codewithkz.productservice.model.Product;
 import com.codewithkz.productservice.mapper.ProductMapper;
 import com.codewithkz.productservice.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/products")
 @Slf4j
-public class ProductController extends BaseController<Product, ProductCreateUpdateRequestDTO, ProductCreateUpdateResponseDTO, Long> {
+public class ProductController extends BaseController<Product, ProductCreateUpdateRequestDTO, ProductCreateUpdateResponseDTO, String> {
 
     private final ProductMapper productMapper;
     private final ProductService productService;
@@ -39,15 +39,9 @@ public class ProductController extends BaseController<Product, ProductCreateUpda
         return ResponseEntity.ok(ApiResponse.success(responseDTO));
     }
 
-//    @GetMapping("{id}/detail")
-//    public ResponseEntity<ApiResponse<ProductInventoryDto>> getProductDetail(@PathVariable Long id) {
-//        var result = service.findByIdWithInventory(id);
-//
-//        return ResponseEntity.ok(ApiResponse.success(result));
-//    }
 
     @GetMapping("{id}")
-    public ResponseEntity<ApiResponse<ProductCreateUpdateResponseDTO>> getById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<ProductCreateUpdateResponseDTO>> getById(@PathVariable String id) {
         return super.getById(id);
     }
 }

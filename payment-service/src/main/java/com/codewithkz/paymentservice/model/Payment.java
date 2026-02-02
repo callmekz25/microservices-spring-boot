@@ -1,6 +1,7 @@
-package com.codewithkz.paymentservice.entity;
+package com.codewithkz.paymentservice.model;
 
 
+import com.codewithkz.commoncore.dto.BaseEntityDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,11 +14,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Payment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private Long orderId;
-    private boolean paid;
+public class Payment extends BaseEntityDTO {
+    private String orderId;
+    private Boolean paid;
     private Double amount;
 }

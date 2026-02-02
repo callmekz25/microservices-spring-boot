@@ -1,14 +1,12 @@
 package com.codewithkz.inventoryservice.mapper;
 
 
-import com.codewithkz.inventoryservice.dto.InventoryDto;
-import com.codewithkz.inventoryservice.entity.Inventory;
+import com.codewithkz.commoncore.mapper.BaseMapper;
+import com.codewithkz.inventoryservice.dto.InventoryCreateUpdateRequestDTO;
+import com.codewithkz.inventoryservice.dto.InventoryCreateUpdateResponseDTO;
+import com.codewithkz.inventoryservice.model.Inventory;
 import org.mapstruct.Mapper;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring")
-public interface InventoryMapper {
-    InventoryDto toDto(Inventory inventory);
-    List<InventoryDto> toDtoList(List<Inventory> inventoryList);
+public interface InventoryMapper extends BaseMapper<Inventory, InventoryCreateUpdateRequestDTO, InventoryCreateUpdateResponseDTO> {
 }

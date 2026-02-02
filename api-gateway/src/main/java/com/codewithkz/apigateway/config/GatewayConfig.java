@@ -40,6 +40,14 @@ public class GatewayConfig {
 
                 .route(p -> p
                         .path("/api/orders/**")
+                        .and()
+                        .method("POST")
+                        .uri("lb://order-service"))
+
+                .route(p -> p
+                        .path("/api/orders/**")
+                        .and()
+                        .method("PUT, DELETE")
                         .filters(f -> f.filter(gatewayTokenFilter))
                         .uri("lb://order-service"))
 

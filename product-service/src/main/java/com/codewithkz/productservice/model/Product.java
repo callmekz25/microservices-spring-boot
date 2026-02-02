@@ -1,5 +1,6 @@
-package com.codewithkz.inventoryservice.entity;
+package com.codewithkz.productservice.model;
 
+import com.codewithkz.commoncore.dto.BaseEntityDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,10 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Inventory {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private Long productId;
-    private int quantity;
+public class Product extends BaseEntityDTO {
+    private String name;
+    private int price;
 }

@@ -1,8 +1,8 @@
 package com.codewithkz.paymentservice.publisher;
 
 
-import com.codewithkz.paymentservice.entity.OutboxEvent;
-import com.codewithkz.paymentservice.entity.OutboxStatus;
+import com.codewithkz.paymentservice.model.OutboxEvent;
+import com.codewithkz.commoncore.enums.OutboxStatus;
 import com.codewithkz.paymentservice.repository.OutboxRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

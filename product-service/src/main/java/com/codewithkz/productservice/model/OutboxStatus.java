@@ -1,4 +1,4 @@
-package com.codewithkz.orderservice.entity;
+package com.codewithkz.productservice.model;
 
 public enum OutboxStatus {
     PENDING,

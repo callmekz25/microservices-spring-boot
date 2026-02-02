@@ -1,45 +1,65 @@
 package com.codewithkz.inventoryservice.controller;
 
 
+import com.codewithkz.commoncore.controller.BaseController;
 import com.codewithkz.commoncore.response.ApiResponse;
-import com.codewithkz.inventoryservice.dto.InventoryDto;
+import com.codewithkz.inventoryservice.dto.InventoryCreateUpdateRequestDTO;
+import com.codewithkz.inventoryservice.dto.InventoryCreateUpdateResponseDTO;
+import com.codewithkz.inventoryservice.model.Inventory;
+import com.codewithkz.inventoryservice.mapper.InventoryMapper;
 import com.codewithkz.inventoryservice.service.impl.InventoryServiceImpl;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/inventories")
-public class InventoryController {
+public class InventoryController extends BaseController<Inventory, InventoryCreateUpdateRequestDTO, InventoryCreateUpdateResponseDTO, String> {
 
     private final InventoryServiceImpl service;
+    private final InventoryMapper mapper;
 
-    public InventoryController(InventoryServiceImpl service) {
+    public InventoryController(InventoryServiceImpl service, InventoryMapper mapper) {
+        super(service, mapper);
         this.service = service;
+        this.mapper = mapper;
     }
 
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<InventoryDto>>> getInventories(HttpServletRequest request) {
-        log.info("User Id: {}", request.getHeader("X-User-Id"));
-        log.info("Role: {}", request.getHeader("X-Role"));
-        var result = service.findAll();
-
-        return ResponseEntity.ok(ApiResponse.success(result));
+    public ResponseEntity<ApiResponse<List<InventoryCreateUpdateResponseDTO>>> getAll() {
+        return super.getAll();
     }
 
-    @GetMapping("products/{id}")
-    public ResponseEntity<ApiResponse<InventoryDto>> getInventoryByProductId(@PathVariable Long id){
-        var result = service.findByProductId(id);
+    @PostMapping
+    public ResponseEntity<ApiResponse<InventoryCreateUpdateResponseDTO>> create(@RequestBody InventoryCreateUpdateRequestDTO dto) {
+        return super.create(dto);
+    }
 
-        return ResponseEntity.ok(ApiResponse.success(result));
+
+    @GetMapping("{id}")
+    public ResponseEntity<ApiResponse<InventoryCreateUpdateResponseDTO>> getById(@PathVariable String id) {
+        return super.getById(id);
+    }
+
+    @PostMapping("validate")
+    public ResponseEntity<ApiResponse<InventoryCreateUpdateResponseDTO>> validateStock(@RequestBody InventoryCreateUpdateRequestDTO dto) {
+        var result = this.service.validateStock(dto);
+        var responseDTO = this.mapper.toDTO(result);
+        return ResponseEntity.ok(ApiResponse.success(responseDTO));
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<ApiResponse<InventoryCreateUpdateResponseDTO>> update(@PathVariable String id, @RequestBody InventoryCreateUpdateRequestDTO dto) {
+        return super.update(id, dto);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<ApiResponse> delete(@PathVariable String id) {
+        return super.delete(id);
     }
 
 }

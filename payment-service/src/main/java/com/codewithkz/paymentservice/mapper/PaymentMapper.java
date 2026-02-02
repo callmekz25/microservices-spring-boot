@@ -1,15 +1,12 @@
 package com.codewithkz.paymentservice.mapper;
 
-import com.codewithkz.paymentservice.dto.CreatePaymentDto;
-import com.codewithkz.paymentservice.dto.PaymentDto;
-import com.codewithkz.paymentservice.entity.Payment;
+import com.codewithkz.commoncore.mapper.BaseMapper;
+import com.codewithkz.paymentservice.dto.PaymentCreateUpdateRequestDTO;
+import com.codewithkz.paymentservice.dto.PaymentCreateUpdateResponseDTO;
+import com.codewithkz.paymentservice.model.Payment;
 import org.mapstruct.Mapper;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring")
-public interface PaymentMapper {
-    PaymentDto toDto(Payment payment);
-    Payment toEntity(CreatePaymentDto dto);
-    List<PaymentDto> toDtoList(List<Payment> payments);
+public interface PaymentMapper extends BaseMapper<Payment, PaymentCreateUpdateRequestDTO, PaymentCreateUpdateResponseDTO> {
+
 }

@@ -1,13 +1,10 @@
 package com.codewithkz.paymentservice.service;
 
-import com.codewithkz.paymentservice.dto.PaymentDto;
+import com.codewithkz.commoncore.service.BaseService;
+import com.codewithkz.paymentservice.model.Payment;
 import com.codewithkz.paymentservice.event.CreatePaymentEvent;
-import com.codewithkz.paymentservice.event.InventoryReservedEvent;
 
-import java.util.List;
-
-public interface PaymentService {
-    List<PaymentDto> findAll();
-    PaymentDto findByOrderId(Long id);
+public interface PaymentService extends BaseService<Payment, String> {
+    Payment getByOrderId(String id);
     void handleProcessPaymentEvent(CreatePaymentEvent event);
 }

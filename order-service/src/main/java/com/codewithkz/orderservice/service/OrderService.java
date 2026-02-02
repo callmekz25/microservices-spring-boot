@@ -1,15 +1,11 @@
 package com.codewithkz.orderservice.service;
 
-import com.codewithkz.orderservice.dto.CreateOrderDto;
-import com.codewithkz.orderservice.dto.OrderDto;
-import com.codewithkz.orderservice.entity.OrderStatus;
-import com.codewithkz.orderservice.event.InventoryReservedEvent;
+import com.codewithkz.commoncore.service.BaseService;
+import com.codewithkz.orderservice.model.Order;
+import com.codewithkz.orderservice.model.OrderStatus;
+import com.codewithkz.commoncore.event.InventoryReservedEvent;
 
-import java.util.List;
-
-public interface OrderService {
-    List<OrderDto> findAll();
-    OrderDto create(CreateOrderDto dto);
-    void updateStatusOrder(Long orderId, OrderStatus status);
+public interface OrderService extends BaseService<Order, String> {
+    void updateStatusOrder(String orderId, OrderStatus status);
     void handleCreatePaymentCommand(InventoryReservedEvent event);
 }

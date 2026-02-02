@@ -4,7 +4,7 @@
 //import com.codewithkz.commoncore.exception.NotFoundException;
 //import com.codewithkz.productservice.dto.ProductCreateUpdateRequestDTO;
 //import com.codewithkz.productservice.dto.ProductDto;
-//import com.codewithkz.productservice.entity.Product;
+//import com.codewithkz.productservice.model.Product;
 //import com.codewithkz.productservice.service.impl.OutboxServiceImpl;
 //import com.codewithkz.productservice.mapper.ProductMapper;
 //import com.codewithkz.productservice.repository.ProductRepository;
@@ -97,12 +97,12 @@
 //    @Test
 //    public void shouldCreateProductSuccessfully() {
 //        ProductCreateUpdateRequestDTO payload = new ProductCreateUpdateRequestDTO("Laptop Acer", 1000, 10);
-//        Product entity =  new Product(null, "Laptop Acer", 1000);
+//        Product model =  new Product(null, "Laptop Acer", 1000);
 //        Product product = new Product(1L, "Laptop Acer", 1000);
 //        ProductDto dto = new ProductDto(1L, "Laptop Acer", 1000);
 //
-//        Mockito.when(productMapper.toEntity(payload)).thenReturn(entity);
-//        Mockito.when(productRepository.save(entity)).thenReturn(product);
+//        Mockito.when(productMapper.toEntity(payload)).thenReturn(model);
+//        Mockito.when(productRepository.save(model)).thenReturn(product);
 //        Mockito.when(productMapper.toDTO(Mockito.any(Product.class))).thenReturn(dto);
 //
 //        var result = productService.create(payload);
@@ -111,7 +111,7 @@
 //        assertEquals(dto, result);
 //
 //        Mockito.verify(productMapper).toEntity(payload);
-//        Mockito.verify(productRepository).save(entity);
+//        Mockito.verify(productRepository).save(model);
 //        Mockito.verify(productMapper).toDTO(Mockito.any(Product.class));
 //
 //        Mockito.verify(outboxService).save(
@@ -124,10 +124,10 @@
 //    @Test
 //    public void shouldThrowExceptionWhenCreateProductFailed() {
 //        ProductCreateUpdateRequestDTO payload = new ProductCreateUpdateRequestDTO("Laptop Acer", 1000, 10);
-//        Product entity = new Product(null, "Laptop Acer", 1000);
+//        Product model = new Product(null, "Laptop Acer", 1000);
 //
-//        Mockito.when(productMapper.toEntity(payload)).thenReturn(entity);
-//        Mockito.when(productRepository.save(entity))
+//        Mockito.when(productMapper.toEntity(payload)).thenReturn(model);
+//        Mockito.when(productRepository.save(model))
 //                .thenThrow(new RuntimeException("DB error"));
 //
 //        BaseException exception = assertThrows(BaseException.class, () -> {
@@ -137,7 +137,7 @@
 //        assertEquals("DB error", exception.getMessage());
 //
 //        Mockito.verify(productMapper).toEntity(payload);
-//        Mockito.verify(productRepository).save(entity);
+//        Mockito.verify(productRepository).save(model);
 //
 //
 //        Mockito.verify(outboxService, Mockito.never()).save(

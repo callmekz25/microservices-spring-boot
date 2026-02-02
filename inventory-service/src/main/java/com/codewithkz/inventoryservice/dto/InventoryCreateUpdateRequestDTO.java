@@ -1,5 +1,6 @@
 package com.codewithkz.inventoryservice.dto;
 
+import com.codewithkz.commoncore.dto.BaseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,8 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class InventoryDto {
-    private Long id;
-    private Long productId;
+public class InventoryCreateUpdateRequestDTO extends BaseDTO {
+    private String productId;
     private int quantity;
 }

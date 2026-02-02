@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class OrderCreatedEvent {
-    private Long orderId;
+    private String orderId;
     private Double price;
-    private Long productId;
+    private String productId;
     private Double total;
     private int quantity;
     private String userId;
