@@ -3,6 +3,7 @@ package com.codewithkz.orderservice.service.impl;
 import com.codewithkz.commoncore.exception.UnauthorizedException;
 import com.codewithkz.commoncore.response.ApiResponse;
 import com.codewithkz.commoncore.service.impl.BaseServiceImpl;
+import com.codewithkz.orderservice.dto.InventoryCreateUpdateRequestDTO;
 import com.codewithkz.orderservice.dto.InventoryCreateUpdateResponseDTO;
 import com.codewithkz.orderservice.dto.PaymentCreateUpdateRequestDTO;
 import com.codewithkz.orderservice.dto.ProductCreateUpdateResponseDTO;
@@ -16,6 +17,7 @@ import com.codewithkz.orderservice.service.client.ProductServiceIntegration;
 import com.codewithkz.commoncore.event.OrderCreatedEvent;
 import com.codewithkz.orderservice.repository.OrderRepository;
 import com.codewithkz.orderservice.service.OrderService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements OrderService {
 
     private final ProductServiceIntegration productServiceIntegration;
@@ -58,9 +61,16 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
         String userId = authentication.getName();
 
         var order = new Order();
+        log.info("Call to product-service to get product with id: {}", dto.getProductId());
 
         ProductCreateUpdateResponseDTO product = productServiceIntegration.getById(dto.getProductId()).getData();
-        inventoryServiceIntegration.validateStock(product.getId());
+        log.info("Call to inventory-service to validate stock: {}", dto.getProductId());
+        InventoryCreateUpdateRequestDTO requestDTO = InventoryCreateUpdateRequestDTO
+                .builder()
+                .productId(dto.getProductId())
+                .quantity(dto.getQuantity())
+                .build();
+        inventoryServiceIntegration.validateStock(requestDTO);
 
         order.setProductId(product.getId());
         order.setQuantity(dto.getQuantity());
@@ -72,8 +82,13 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
 
         Order created = repository.save(order);
 
-        PaymentCreateUpdateRequestDTO request = new PaymentCreateUpdateRequestDTO(created.getTotal(), created.getId());
-        paymentServiceIntegration.create(request);
+        PaymentCreateUpdateRequestDTO paymentRequestDTO = PaymentCreateUpdateRequestDTO
+                .builder()
+                .orderId(created.getId())
+                .amount(created.getTotal())
+                .build();
+
+        paymentServiceIntegration.create(paymentRequestDTO);
 
         created.setStatus(OrderStatus.COMPLETED);
 

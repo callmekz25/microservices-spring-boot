@@ -34,6 +34,8 @@ public class OrderController extends BaseController<Order, OrderCreateUpdateRequ
 
     @PostMapping
     public ResponseEntity<ApiResponse<OrderCreateUpdateResponseDTO>> create(@RequestBody OrderCreateUpdateRequestDTO dto) {
+        log.info("Product Id: {}", dto.getProductId());
+        log.info("Quantity: {}", dto.getQuantity());
         Order source = mapper.toEntity(dto);
         Order created = service.create(source);
         OrderCreateUpdateResponseDTO responseDTO = mapper.toDTO(created);

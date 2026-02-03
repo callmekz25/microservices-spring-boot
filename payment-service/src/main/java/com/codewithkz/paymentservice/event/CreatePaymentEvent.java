@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class CreatePaymentEvent {
-    private Long orderId;
+    private String orderId;
     private Double amount;
 }

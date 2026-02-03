@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class PaymentCompletedEvent {
-    private Long orderId;
+    private String orderId;
 }

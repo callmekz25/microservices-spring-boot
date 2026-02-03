@@ -3,17 +3,16 @@ package com.codewithkz.paymentservice.model;
 
 import com.codewithkz.commoncore.dto.BaseEntityDTO;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 public class Payment extends BaseEntityDTO {
     private String orderId;
     private Boolean paid;

@@ -9,7 +9,15 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface BaseMapper<E, Req, Res> {
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "createdAt", source = "createdAt")
+    @Mapping(target = "updatedAt", source = "updatedAt")
+    @Mapping(target = "deleted", source = "deleted")
     Res toDTO(E entity);
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "createdAt", source = "createdAt")
+    @Mapping(target = "updatedAt", source = "updatedAt")
+    @Mapping(target = "deleted", source = "deleted")
     E toEntity(Req dto);
     List<E> toEntityList(List<Req> dtoList);
     List<Res> toDTOList(List<E> entityList);

@@ -1,9 +1,6 @@
 package com.codewithkz.productservice.config;
 
-import com.codewithkz.commoncore.filters.GatewaySecurityFilter;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,8 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -23,28 +18,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Value("${jwt.internalSecret}")
-    private String internalSecret;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//
-//        http.csrf(AbstractHttpConfigurer::disable)
-//                .sessionManagement(sessionManagement ->
-//                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                )
-//
-//                .authorizeHttpRequests(
-//                        auth -> auth
-//                                .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
-//                                .anyRequest().authenticated()
-//                ).addFilterBefore(new GatewaySecurityFilter(objectMapper, internalSecret), BasicAuthenticationFilter.class)
-//                .httpBasic(basic -> basic.disable());
-//
-//        return http.build();
-//    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -60,12 +33,7 @@ public class SecurityConfig {
                                 .anyRequest().authenticated()
 
                 )
-                .addFilterBefore(
-                        new GatewaySecurityFilter(objectMapper, internalSecret),
-                        BasicAuthenticationFilter.class
-                )
-                .httpBasic(basic -> basic.disable());
-
+                .oauth2ResourceServer(oauth -> oauth.jwt(Customizer.withDefaults()));
         return http.build();
     }
 

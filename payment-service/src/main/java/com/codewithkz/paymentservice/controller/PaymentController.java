@@ -8,6 +8,7 @@ import com.codewithkz.paymentservice.mapper.PaymentMapper;
 import com.codewithkz.paymentservice.model.Payment;
 import com.codewithkz.paymentservice.service.impl.PaymentServiceImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/payments")
+@Slf4j
 public class PaymentController extends BaseController<Payment, PaymentCreateUpdateRequestDTO, PaymentCreateUpdateResponseDTO, String> {
 
     private final PaymentServiceImpl service;

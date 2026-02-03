@@ -27,9 +27,9 @@ import java.util.List;
 @Slf4j
 public class GatewaySecurityFilter extends OncePerRequestFilter {
 
-    private final ObjectMapper objectMapper;
-
-    private final String internalSecret;
+//    private final ObjectMapper objectMapper;
+//
+//    private final String internalSecret;
 
     private static String ROLE_PREFIX = "ROLE_";
 
@@ -93,20 +93,20 @@ public class GatewaySecurityFilter extends OncePerRequestFilter {
 
 
 
-    private void formatResponse(
-            HttpServletResponse response,
-            int status,
-            String message
-    ) throws IOException {
-
-        response.setStatus(status);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-
-        ApiResponse<?> body = ApiResponse.error(message);
-
-        String json = objectMapper.writeValueAsString(body);
-        response.getWriter().write(json);
-    }
+//    private void formatResponse(
+//            HttpServletResponse response,
+//            int status,
+//            String message
+//    ) throws IOException {
+//
+//        response.setStatus(status);
+//        response.setContentType("application/json");
+//        response.setCharacterEncoding("UTF-8");
+//
+//        ApiResponse<?> body = ApiResponse.error(message);
+//
+//        String json = objectMapper.writeValueAsString(body);
+//        response.getWriter().write(json);
+//    }
 
 }

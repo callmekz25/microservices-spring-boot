@@ -2,15 +2,14 @@ package com.codewithkz.orderservice.dto;
 
 import com.codewithkz.commoncore.dto.BaseDTO;
 import com.codewithkz.orderservice.model.OrderStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
-@Builder
+@AllArgsConstructor
+@SuperBuilder
 public class OrderCreateUpdateRequestDTO extends BaseDTO {
     private String productId;
     private int quantity;

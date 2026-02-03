@@ -32,7 +32,11 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
     @Transactional
     @Override
     public Product createProduct(ProductCreateUpdateRequestDTO dto) {
-        Product entity = new Product(dto.getName(), dto.getPrice());
+        Product entity = Product
+                .builder()
+                .name(dto.getName())
+                .price(dto.getPrice())
+                .build();
 
         Product created = super.create(entity);
 

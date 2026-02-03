@@ -1,15 +1,14 @@
 package com.codewithkz.productservice.dto;
 
 import com.codewithkz.commoncore.dto.BaseDTO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
-@Builder
+@AllArgsConstructor
+@SuperBuilder
 public class ProductCreateUpdateRequestDTO extends BaseDTO {
     private String name;
     private int price;

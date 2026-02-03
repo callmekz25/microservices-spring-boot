@@ -2,17 +2,15 @@ package com.codewithkz.orderservice.model;
 
 import com.codewithkz.commoncore.dto.BaseEntityDTO;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "orders")
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 public class Order extends BaseEntityDTO {
     private String productId;
     private String userId;

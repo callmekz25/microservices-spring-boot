@@ -3,8 +3,11 @@ package com.codewithkz.commoncore.model;
 import com.codewithkz.commoncore.dto.BaseEntityDTO;
 import com.codewithkz.commoncore.enums.OutboxStatus;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -14,6 +17,9 @@ import java.util.UUID;
 @MappedSuperclass
 @Getter
 @Setter
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 public class BaseOutboxEntity extends BaseEntityDTO {
     @PrePersist
     public void genId() {

@@ -12,16 +12,6 @@ app:
 spring:
   security:
     oauth2:
-      client:
-        registration:
-          keycloak:
-            client-id: ${KC_CLIENT_ID}
-            client-secret: ${KC_SECRET}
-            authorization-grant-type: authorization_code
-            scope: openid, profile, roles, email
-        provider:
-          keycloak:
-            issuer-uri: ${KC_ISSUE_URL}
       resourceserver:
         jwt:
           issuer-uri: ${KC_ISSUE_URL}

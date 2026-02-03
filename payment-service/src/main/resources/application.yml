@@ -16,6 +16,13 @@ spring:
     url: jdbc:postgresql://${POSTGRES_HOST}/${PAYMENT_DB}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KC_ISSUE_URL}
+
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
