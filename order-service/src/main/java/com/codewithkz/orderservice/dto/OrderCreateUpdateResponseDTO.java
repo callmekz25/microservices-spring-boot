@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 public class OrderCreateUpdateResponseDTO extends BaseDTO {
-    private Long productId;
+    private String productId;
     private int quantity;
     private Double price;
     private Double total;

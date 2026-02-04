@@ -1,6 +1,6 @@
 package com.codewithkz.paymentservice.consumer;
 
-import com.codewithkz.paymentservice.event.CreatePaymentEvent;
+import com.codewithkz.commoncore.event.CreatePaymentEvent;
 import com.codewithkz.paymentservice.service.impl.PaymentServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

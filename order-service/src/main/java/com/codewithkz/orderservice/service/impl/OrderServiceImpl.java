@@ -1,18 +1,12 @@
 package com.codewithkz.orderservice.service.impl;
 
 import com.codewithkz.commoncore.exception.UnauthorizedException;
-import com.codewithkz.commoncore.response.ApiResponse;
 import com.codewithkz.commoncore.service.impl.BaseServiceImpl;
-import com.codewithkz.orderservice.dto.InventoryCreateUpdateRequestDTO;
-import com.codewithkz.orderservice.dto.InventoryCreateUpdateResponseDTO;
-import com.codewithkz.orderservice.dto.PaymentCreateUpdateRequestDTO;
 import com.codewithkz.orderservice.dto.ProductCreateUpdateResponseDTO;
 import com.codewithkz.orderservice.model.Order;
 import com.codewithkz.orderservice.model.OrderStatus;
 import com.codewithkz.commoncore.event.CreatePaymentEvent;
 import com.codewithkz.commoncore.event.InventoryReservedEvent;
-import com.codewithkz.orderservice.service.client.InventoryServiceIntegration;
-import com.codewithkz.orderservice.service.client.PaymentServiceIntegration;
 import com.codewithkz.orderservice.service.client.ProductServiceIntegration;
 import com.codewithkz.commoncore.event.OrderCreatedEvent;
 import com.codewithkz.orderservice.repository.OrderRepository;
@@ -29,8 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements OrderService {
 
     private final ProductServiceIntegration productServiceIntegration;
-    private final InventoryServiceIntegration inventoryServiceIntegration;
-    private final PaymentServiceIntegration paymentServiceIntegration;
     private final OrderRepository orderRepository;
     private final OutboxServiceImpl outboxService;
     @Value("${app.kafka.topic.reserve-inventory-command}")
@@ -38,14 +30,11 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
     @Value("${app.kafka.topic.create-payment-command}")
     private String createPaymentTopicName;
 
-    public OrderServiceImpl(OrderRepository repository, ProductServiceIntegration productServiceIntegration, OutboxServiceImpl outboxService,
-                            InventoryServiceIntegration inventoryServiceIntegration, PaymentServiceIntegration paymentServiceIntegration) {
+    public OrderServiceImpl(OrderRepository repository, ProductServiceIntegration productServiceIntegration, OutboxServiceImpl outboxService) {
         super(repository);
         this.orderRepository = repository;
         this.outboxService = outboxService;
         this.productServiceIntegration = productServiceIntegration;
-        this.inventoryServiceIntegration = inventoryServiceIntegration;
-        this.paymentServiceIntegration = paymentServiceIntegration;
     }
 
     @Override
@@ -62,15 +51,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
 
         var order = new Order();
         log.info("Call to product-service to get product with id: {}", dto.getProductId());
-
         ProductCreateUpdateResponseDTO product = productServiceIntegration.getById(dto.getProductId()).getData();
-        log.info("Call to inventory-service to validate stock: {}", dto.getProductId());
-        InventoryCreateUpdateRequestDTO requestDTO = InventoryCreateUpdateRequestDTO
-                .builder()
-                .productId(dto.getProductId())
-                .quantity(dto.getQuantity())
-                .build();
-        inventoryServiceIntegration.validateStock(requestDTO);
 
         order.setProductId(product.getId());
         order.setQuantity(dto.getQuantity());
@@ -80,33 +61,20 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
         order.setTotal(total);
         order.setStatus(OrderStatus.PENDING);
 
-        Order created = repository.save(order);
+        Order created = orderRepository.save(order);
 
-        PaymentCreateUpdateRequestDTO paymentRequestDTO = PaymentCreateUpdateRequestDTO
+        OrderCreatedEvent payload = OrderCreatedEvent
                 .builder()
                 .orderId(created.getId())
-                .amount(created.getTotal())
+                .productId(order.getProductId())
+                .quantity(created.getQuantity())
+                .userId(created.getUserId())
+                .price(created.getPrice())
+                .total(created.getTotal())
                 .build();
 
-        paymentServiceIntegration.create(paymentRequestDTO);
-
-        created.setStatus(OrderStatus.COMPLETED);
-
+        outboxService.create(reserveInventoryTopicName, payload);
         return created;
-
-
-
-//        OrderCreatedEvent payload = OrderCreatedEvent
-//                .builder()
-//                .orderId(order.getId())
-//                .productId(order.getProductId())
-//                .quantity(order.getQuantity())
-//                .userId(order.getUserId())
-//                .price(order.getPrice())
-//                .total(order.getTotal())
-//                .build();
-
-//        outboxService.create(reserveInventoryTopicName, payload);
 
     }
 

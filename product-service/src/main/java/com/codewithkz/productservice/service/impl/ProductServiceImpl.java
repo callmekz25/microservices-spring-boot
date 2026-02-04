@@ -28,7 +28,7 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
     }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @Transactional
     @Override
     public Product createProduct(ProductCreateUpdateRequestDTO dto) {
