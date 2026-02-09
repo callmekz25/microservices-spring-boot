@@ -1,5 +1,6 @@
-target/*.jar
-!target/app.jar
 .git
-.mvn
+.gitignore
 .idea
+.vscode
+node_modules
+*.log

@@ -2,8 +2,6 @@ package com.codewithkz.productservice.model;
 
 import com.codewithkz.commoncore.dto.BaseEntityDTO;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
